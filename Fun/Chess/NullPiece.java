@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 
 public class NullPiece extends ChessPiece {
     public NullPiece(char player) {

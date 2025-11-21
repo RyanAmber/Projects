@@ -1,4 +1,4 @@
-package Fun.AI_PerfectSquare;
+package AI_PerfectSquare;
 import java.util.*;
 
 public class AiPerfectSquare {

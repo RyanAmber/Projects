@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 
 import java.util.*;
 
@@ -51,10 +51,11 @@ public class ChessBoard {
         board[7][3] = new Queen('w');  board[7][4] = new King('w');
     }
     public void setupBoard(ChessPiece[][] newBoard) {
-        board = newBoard;
+        board = new ChessPiece[8][8];
         kingPosition=new int[]{-1,-1,-1,-1};
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                board[i][j] = newBoard[i][j];
                 if (board[i][j] instanceof King) {
                     if (board[i][j].getColor() == 'w') {
                         kingPosition[0] = i;

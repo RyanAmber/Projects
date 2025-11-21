@@ -1,4 +1,4 @@
-package Fun;
+//package Fun;
 import java.util.*;
 public class AI {
     public static void main(String[] args) {

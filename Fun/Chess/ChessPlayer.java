@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 
 import java.util.*;
 
@@ -66,19 +66,38 @@ public class ChessPlayer {
                 move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
             }
         }else if(type==4){
-            ChessBoardNode rootNode=new ChessBoardNode(board,team,boardStates,new ArrayList<>());
+            ChessBoard tempBoard = new ChessBoard();
+            tempBoard.setupBoard(board.getBoard());
+            ChessBoardNode rootNode = new ChessBoardNode(tempBoard, team, boardStates, new ArrayList<>());
             rootNode.getAllNextMoves();
-            double bestScore=team=='w'?Double.NEGATIVE_INFINITY:Double.POSITIVE_INFINITY;
-            for (ChessBoardNode checkMove:rootNode.getNextMoves()) {
-                double moveScore = checkMove.getScoreAtDepth(2);
-                if (team == 'w'&&moveScore>bestScore) {
-                    bestScore = moveScore;
-                    List<Integer> moveIndices = checkMove.getMove();
-                    move[0] = "" + (char)('a' + moveIndices.get(1)) + (8 - moveIndices.get(0));
-                    move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
-                } else if(team == 'b'&&moveScore<bestScore) {
-                    bestScore = moveScore;
-                    List<Integer> moveIndices = checkMove.getMove();
+            double bestScore = team == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+            List<ChessBoardNode> bestNodes = new ArrayList<>();
+            double eps = 2e-6;//Slight randomness
+            for (ChessBoardNode child : rootNode.getNextMoves()) {
+                double moveScore = child.getScoreAtDepth(0);
+                if (team == 'w') {
+                    if (moveScore > bestScore + eps) {
+                        bestScore = moveScore;
+                        bestNodes.clear();
+                        bestNodes.add(child);
+                    } else if (Math.abs(moveScore - bestScore) <= eps) {
+                        bestNodes.add(child);
+                    }
+                } else {
+                    if (moveScore < bestScore - eps) {
+                        bestScore = moveScore;
+                        bestNodes.clear();
+                        bestNodes.add(child);
+                    } else if (Math.abs(moveScore - bestScore) <= eps) {
+                        bestNodes.add(child);
+                    }
+                }
+            }
+            if (!bestNodes.isEmpty()) {
+                //System.out.println("What do I do?");
+                ChessBoardNode chosen = bestNodes.get(new Random().nextInt(bestNodes.size()));
+                List<Integer> moveIndices = chosen.getMove();
+                if (moveIndices != null && moveIndices.size() >= 4) {
                     move[0] = "" + (char)('a' + moveIndices.get(1)) + (8 - moveIndices.get(0));
                     move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
                 }

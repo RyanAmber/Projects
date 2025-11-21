@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 import java.util.*;
 
 public class ChessBoardNode {

@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 
 public class Queen extends ChessPiece {
     public Queen(char color) { super(color); }

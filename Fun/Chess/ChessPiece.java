@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 
 public abstract class ChessPiece implements Cloneable {
     protected char color; // 'w' or 'b'

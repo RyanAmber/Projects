@@ -1,4 +1,4 @@
-package Fun.Chess;
+package Chess;
 import java.util.*;
 
 public class ChessGame {
@@ -15,7 +15,7 @@ public class ChessGame {
         int w2 = 0;
         int t = 0;
 
-        for (int i = 0; i <1; i++) {
+        for (int i = 0; i <20; i++) {
             System.out.println("Starting game                                                 " + (i + 1));
             char currentPlayer = 'w';
             boolean gameOver = false;

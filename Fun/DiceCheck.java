@@ -1,4 +1,4 @@
-package Fun;
+//package Fun;
 public class DiceCheck{
     public static int roll(int sides){
         return (int) (Math.random()*sides+1);

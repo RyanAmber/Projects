@@ -1,4 +1,4 @@
-package Fun.AI_PerfectSquare;
+package AI_PerfectSquare;
 
 public class PerfectSquare {
     int[][] square=new int[3][3];
