@@ -72,7 +72,7 @@ public class ChessPlayer {
             rootNode.getAllNextMoves();
             double bestScore = team == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             List<ChessBoardNode> bestNodes = new ArrayList<>();
-            double eps = 2e-6;//Slight randomness
+            double eps = 1e-6;//Slight randomness
             for (ChessBoardNode child : rootNode.getNextMoves()) {
                 double moveScore = child.getScoreAtDepth(0);
                 if (team == 'w') {
@@ -92,9 +92,9 @@ public class ChessPlayer {
                         bestNodes.add(child);
                     }
                 }
+                System.out.println(moveScore+" "+bestScore+" from "+(char)(child.getMove().get(1) + 'a') + (8 - child.getMove().get(0)) + " to " + (char)(child.getMove().get(3) + 'a') + (8 - child.getMove().get(2)));
             }
             if (!bestNodes.isEmpty()) {
-                //System.out.println("What do I do?");
                 ChessBoardNode chosen = bestNodes.get(new Random().nextInt(bestNodes.size()));
                 List<Integer> moveIndices = chosen.getMove();
                 if (moveIndices != null && moveIndices.size() >= 4) {
@@ -181,8 +181,8 @@ public class ChessPlayer {
         score-=0.3*kingSafety(board,'b');//AI adjust
         score+=0.5*rookFiles(board,'w');//AI adjust
         score-=0.5*rookFiles(board,'b');//AI adjust
-        score+=1.2*pawnProgress(board,'w');//AI adjust
-        score-=1.2*pawnProgress(board,'b');//AI adjust
+        score+=1.4*pawnProgress(board,'w');//AI adjust
+        score-=1.4*pawnProgress(board,'b');//AI adjust
         score+=0.4*activePieces(board,'w');//AI adjust
         score-=0.4*activePieces(board,'b');//AI adjust
         List<List<Integer>> allMoves = b.getAllLegalMoves('w');
