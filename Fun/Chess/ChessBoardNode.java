@@ -22,7 +22,7 @@ public class ChessBoardNode {
         return move;
     }
     public double getScoreAtDepth(int depth) {
-        ChessPlayer p=new ChessPlayer(3);
+        ChessPlayer p=new ChessPlayer(2);
         int moves=data.halfmoveClock;
         if(depth==0) {
             double score=p.score(data.getBoard(),playerTurn,moves,p.getWeights(),boardStates);

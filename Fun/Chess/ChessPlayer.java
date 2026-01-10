@@ -66,13 +66,14 @@ public class ChessPlayer {
                 move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
             }
         }else if(type==4){
+            System.out.println("Initial Score: " + score(board.copyBoard(), team, board.halfmoveClock, new double[]{0.0,1.0,3.0,3.0,5.0,9.0,0.02},boardStates));
             ChessBoard tempBoard = new ChessBoard();
             tempBoard.setupBoard(board.getBoard());
             ChessBoardNode rootNode = new ChessBoardNode(tempBoard, team, boardStates, new ArrayList<>());
             rootNode.getAllNextMoves();
             double bestScore = team == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             List<ChessBoardNode> bestNodes = new ArrayList<>();
-            double eps = 1e-6;//Slight randomness
+            double eps = 1e-8;//Slight randomness
             for (ChessBoardNode child : rootNode.getNextMoves()) {
                 double moveScore = child.getScoreAtDepth(0);
                 if (team == 'w') {
@@ -92,7 +93,7 @@ public class ChessPlayer {
                         bestNodes.add(child);
                     }
                 }
-                System.out.println(moveScore+" "+bestScore+" from "+(char)(child.getMove().get(1) + 'a') + (8 - child.getMove().get(0)) + " to " + (char)(child.getMove().get(3) + 'a') + (8 - child.getMove().get(2)));
+                System.out.println(bestScore + " " + moveScore + " from "+(char)(child.getMove().get(1) + 'a') + (8 - child.getMove().get(0)) + " to " + (char)(child.getMove().get(3) + 'a') + (8 - child.getMove().get(2)));
             }
             if (!bestNodes.isEmpty()) {
                 ChessBoardNode chosen = bestNodes.get(new Random().nextInt(bestNodes.size()));
@@ -143,6 +144,7 @@ public class ChessPlayer {
                                     case "Q": wmodifier-=9.0; break;//AI adjust
                                 }
                             }
+                            score-=0.1;
                         }
                     }else if(board[i][j].getColor()=='b'){
                         ChessPiece temp=board[i][j];
@@ -165,6 +167,7 @@ public class ChessPlayer {
                                     case "Q": bmodifier+=9.0; break;//AI adjust
                                 }
                             }
+                            score+=0.1;
                         }
                     }
                 }

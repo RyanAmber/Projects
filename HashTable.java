@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Simple HashTable class. Analagous to Java's version which is called HashMap<K, V>. 
  * 
@@ -15,8 +17,9 @@ public class HashTable<K, V> {
   // 3. If probing is used, can MAX_LOAD be greater than 1? Why?
   //No, in probing, each index can only hold one item
   // 4. What approach (chaining/probing) is used in this version of the hash table?
+  // Probing is being used in this hash table
   // 5. What objects in Java return a hashCode() value? 
-  // 6. Complete the missing parts of the code marked below with TODO.
+  // All objects in Java can return a hashCode() value, we only need to interpret it
   // 7. Thouroughly test your code. 
   // 8. Submit your code on MyMCPS/Canvas. 
 
@@ -30,7 +33,6 @@ public class HashTable<K, V> {
    * HashTable constructor.
    */
   public HashTable() {
-    table = new HashTable.Item[INITIAL_CAPACITY];
     size = 0;
   }
 
@@ -39,18 +41,16 @@ public class HashTable<K, V> {
    * Store the provided key/value pair.
    */
   public void put(K key, V value) {
-
-    // TODO
-
-    // IMPLEMENTATION ADVICE:
-    // Start by coding the findKey method.
-    // 
-    // Use findKey to determine if the provided key is already in the table.
-    // If so, handle that as a special case.
-    //
-    // Once you know that the key is *not* in the table, use linear probing to find
-    // an available location (either a null or a tombstone).
-
+    if(size >= MAX_LOAD * table.length){
+        resize();
+    }
+    int index=indexFor(key.hashCode(),table.length);
+    while(table[index]!=null&&!table[index].tombstone){
+      index++;
+      index%=table.length;
+    }
+    table[index]=new Item(key,value);
+    size++;
   }
 
   /**
@@ -58,7 +58,10 @@ public class HashTable<K, V> {
    * exists.
    */
   public V get(K key) {
-    // TODO
+    int index=findKey(key);
+    if(index!=-1){
+      return table[index].value;
+    }
     return null;
   }
 
@@ -67,8 +70,12 @@ public class HashTable<K, V> {
    * Returns null if the key is not stored in the table.
    */
   public V remove(K key) {
-
-    // TODO
+    int index=findKey(key);
+    if(index!=-1){
+      table[index].tombstone=true;
+      size--;
+      return table[index].value;
+    }
     return null;
   }
 
@@ -86,7 +93,12 @@ public class HashTable<K, V> {
    * Double the size of the hash table and rehash all existing items.
    */
   private void resize() {
-    // TODO
+    Item[] newtable=Arrays.copyOf(table,table.length);
+    for (int i=0;i<newtable.length;i++){
+      if(newtable[i]!=null){
+        put(newtable[i].key,newtable[i].value);
+      }
+    }
   }
 
 
@@ -95,22 +107,20 @@ public class HashTable<K, V> {
    * implemented, this will skip over tombstone positions during the search.
    */
   private int findKey(K key) {
-    // TODO -- THIS METHOD SHOULD BE HELPFUL FOR PUT, GET, AND REMOVE.
-
-    // IMPLEMENTATION ADVICE: All java classes (including K!) have a hashCode method
-    // that returns an integer. This could be ANY integer and probably *won't* be a
-    // valid index into your table array. The hashCode for the key must be mapped to
-    // a valid index. This can be done using the indexFor method included at the
-    // bottom of this file.
-    //
-    // Your code in this method should handle collisions using simple linear
-    // probing.
-
+    int index=indexFor(key.hashCode(),size);
+    if(table[index]!=null&&!table[index].tombstone&&table[index].key==key){
+      return index;
+    }
+    while(table[index]!=null){
+      index++;
+      index%=table.length;
+      if(table[index]!=null&&!table[index].tombstone&&table[index].key==key){
+        return index;
+      }
+    }
+    
     return -1;
   }
-
-
-
   /**
    * Returns index for hash code h.
    */
