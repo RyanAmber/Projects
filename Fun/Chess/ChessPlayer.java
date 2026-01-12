@@ -128,6 +128,7 @@ public class ChessPlayer {
                             int numatkers=b.numSquareAttacked(i,j,'b');
                             int numdefenders=b.numSquareDefended(i,j,'w');
                             if(atkval>0&&(numdefenders>=numatkers)){
+                                wmodifier-=0.5;
                                 switch (temp.getType()){
                                     case "P": wmodifier-=Math.max(0,1.0-atkval); break;
                                     case "N": wmodifier-=Math.max(0,3.0-atkval); break;
@@ -136,6 +137,7 @@ public class ChessPlayer {
                                     case "Q": wmodifier-=Math.max(0,9.0-atkval); break;
                                 }
                             }else if(atkval>0){
+                                wmodifier-=0.25;
                                 switch (temp.getType()){
                                     case "P": wmodifier-=1.0; break;//AI adjust
                                     case "N": wmodifier-=3.0; break;//AI adjust
@@ -151,6 +153,7 @@ public class ChessPlayer {
                         if(b.isSquareAttacked(i, j, 'w')){
                             int atkval=b.minSquareAttacked(i,j,'w');
                             if(atkval>0&&b.isSquareDefended(i,j,'b')){
+                                bmodifier+=0.5;
                                 switch (temp.getType()){
                                     case "P": bmodifier+=Math.max(0,1.0-atkval); break;
                                     case "N": bmodifier+=Math.max(0,3.0-atkval); break;
@@ -159,6 +162,7 @@ public class ChessPlayer {
                                     case "Q": bmodifier+=Math.max(0,9.0-atkval); break;
                                 }
                             }else if(atkval>0){
+                                bmodifier+=0.25;
                                 switch (temp.getType()){
                                     case "P": bmodifier+=1.0; break;//AI adjust
                                     case "N": bmodifier+=3.0; break;//AI adjust
@@ -180,14 +184,14 @@ public class ChessPlayer {
             score+=bmodifier*2;
             score+=wmodifier*0.2;
         }
-        score+=0.3*kingSafety(board,'w');//AI adjust
-        score-=0.3*kingSafety(board,'b');//AI adjust
-        score+=0.5*rookFiles(board,'w');//AI adjust
-        score-=0.5*rookFiles(board,'b');//AI adjust
-        score+=1.4*pawnProgress(board,'w');//AI adjust
-        score-=1.4*pawnProgress(board,'b');//AI adjust
-        score+=0.4*activePieces(board,'w');//AI adjust
-        score-=0.4*activePieces(board,'b');//AI adjust
+        score+=0.4*kingSafety(board,'w');//AI adjust
+        score-=0.4*kingSafety(board,'b');//AI adjust
+        score+=0.4*rookFiles(board,'w');//AI adjust
+        score-=0.4*rookFiles(board,'b');//AI adjust
+        score+=1.2*pawnProgress(board,'w');//AI adjust
+        score-=1.2*pawnProgress(board,'b');//AI adjust
+        score+=0.5*activePieces(board,'w');//AI adjust
+        score-=0.5*activePieces(board,'b');//AI adjust
         List<List<Integer>> allMoves = b.getAllLegalMoves('w');
         for (List<Integer> move : allMoves) {
             score+=weights[6];
