@@ -227,9 +227,9 @@ public class ChessPlayer {
             score=0;
         }
         if (b.isInCheckmate('w')){
-            score-=200000;
+            score=-200000;
         }else if(b.isInCheckmate('b')){
-            score+=200000;
+            score=200000;
         }
         if(b.onlyQueen('w')){
             board=b.getBoard();
@@ -254,6 +254,7 @@ public class ChessPlayer {
             score-=100*pawnSolve(board,'b');
             score-=500;
         } */
+       score+=Math.random()*0.1;
         return Math.round(score*1000.0)/2000.0;
     }
     public int queenSolve(ChessPiece[][] board, char team){
@@ -443,7 +444,7 @@ public class ChessPlayer {
             }
             else
             if(board[0][c]!=null&&(board[0][c].getColor()==team)&&(board[0][c].getType().equals("B")||board[0][c].getType().equals("N"))){
-                active-=1;//AI adjust
+                active+=1;//AI adjust
             }
         }
         return active;

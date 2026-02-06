@@ -24,11 +24,6 @@ public class ChessGame {
 
             while (!gameOver) {
                 board.printBoard();
-                if(boardStates.containsKey(board.toString())) {
-                    boardStates.put(board.toString(), boardStates.get(board.toString()) + 1);
-                } else {
-                    boardStates.put(board.toString(), 1);
-                }
 
                 if (board.isInCheckmate(currentPlayer)) {
                     System.out.println((currentPlayer == 'w' ? "White" : "Black") + " is in checkmate. Game over!");
@@ -40,7 +35,7 @@ public class ChessGame {
                     gameOver = true;
                     continue;
                 }
-                if (boardStates.get(board.toString()) >= 3) {
+                if (boardStates.containsKey(board.toString()) && boardStates.get(board.toString()) >= 3) {
                     System.out.println("Draw by threefold repetition! Game over!");
                     t++;
                     gameOver = true;
@@ -92,6 +87,11 @@ public class ChessGame {
                     boolean moveResult = board.movePiece(move[0], move[1], currentPlayer, scanner);
                     if (moveResult) {
                         currentPlayer = (currentPlayer == 'w') ? 'b' : 'w';
+                        if(boardStates.containsKey(board.toString())) {
+                            boardStates.put(board.toString(), boardStates.get(board.toString()) + 1);
+                        } else {
+                            boardStates.put(board.toString(), 1);
+                        }
                     } else {
                         System.out.println("Invalid move. Try again.");
                     }
