@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    directory = sys.argv[1] if len(sys.argv) == 2 else "AI/Degrees"
 
     # Load data from files into memory
     print("Loading data...")
@@ -91,9 +91,31 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    path =[]
+    explored=set()
+    if source==target:
+        return path
+    frontier=QueueFrontier()
+    frontier.add(Node(source,None,None))
+    while True:
+        if frontier.empty():
+            return None
+        check=frontier.remove()
+        if check.state==target:
+            while check.parent is not None:
+              path.append((check.action,check.state))
+              check=check.parent
+            path.reverse()
+            return path
 
-    # TODO
-    raise NotImplementedError
+        explored.add(check.state)
+        #print(people[check]["name"])
+        neighbors=neighbors_for_person(check.state)
+        for movie,person in neighbors:
+            if not frontier.contains_state(person) and person not in explored:
+                child =Node(state=person,parent=check,action=movie)
+                frontier.add(child)
+    #TODO
 
 
 def person_id_for_name(name):
