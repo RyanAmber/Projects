@@ -14,13 +14,13 @@
 
 import sys
 import re
-import testClasses
+import AI.Pacman.testClasses as testClasses
 import textwrap
 
 # import project specific code
-import layout
-import pacman
-from search import SearchProblem
+import AI.Pacman.layout as layout
+import AI.Pacman.pacman as pacman
+from AI.Pacman.search import SearchProblem
 
 # helper function for printing solutions in solution files
 def wrap_solution(solution):
@@ -290,7 +290,7 @@ class PacmanSearchTest(testClasses.TestCase):
         if type(solution) != type([]):
             return None, None, 'The result of %s must be a list. (Instead, it is %s)' % (self.alg, type(solution))
 
-        from game import Directions
+        from AI.Pacman.game import Directions
         dirs = Directions.LEFT.keys()
         if [el in dirs for el in solution].count(False) != 0:
             return None, None, 'Output of %s must be a list of actions from game.Directions' % self.alg
@@ -368,7 +368,7 @@ class PacmanSearchTest(testClasses.TestCase):
         return True
 
 
-from game import Actions
+from AI.Pacman.game import Actions
 def getStatesFromPath(start, path):
     "Returns the list of states visited along the path"
     vis = [start]

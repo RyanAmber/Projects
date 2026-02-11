@@ -13,17 +13,17 @@
 
 
 # imports from python standard library
-import grading
+import AI.Pacman.grading as grading
 import importlib.util
 import optparse
 import os
 import re
 import sys
-import projectParams
+import AI.Pacman.projectParams as projectParams
 import random
 random.seed(0)
 try: 
-    from pacman import GameState
+    from AI.Pacman.pacman import GameState
 except:
     pass
 
@@ -199,8 +199,8 @@ def printTest(testDict, solutionDict):
 
 
 def runTest(testName, moduleDict, printTestCase=False, display=None):
-    import testParser
-    import testClasses
+    import AI.Pacman.testParser as testParser
+    import AI.Pacman.testClasses as testClasses
     for module in moduleDict:
         setattr(sys.modules[__name__], module, moduleDict[module])
 
@@ -252,8 +252,8 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
             printTestCase=False, questionToGrade=None, display=None):
     # imports of testbench code.  note that the testClasses import must follow
     # the import of student code due to dependencies
-    import testParser
-    import testClasses
+    import AI.Pacman.testParser as testParser
+    import AI.Pacman.testClasses as testClasses
     for module in moduleDict:
         setattr(sys.modules[__name__], module, moduleDict[module])
 
@@ -322,11 +322,11 @@ def getDisplay(graphicsByDefault, options=None):
         graphics = False
     if graphics:
         try:
-            import graphicsDisplay
+            import AI.Pacman.graphicsDisplay as graphicsDisplay
             return graphicsDisplay.PacmanGraphics(1, frameTime=.05)
         except ImportError:
             pass
-    import textDisplay
+    import AI.Pacman.textDisplay as textDisplay
     return textDisplay.NullGraphics()
 
 

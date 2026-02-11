@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import search
+import AI.Pacman.search as search
 import random
 
 # Module Classes
