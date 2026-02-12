@@ -12,8 +12,8 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from AI.Pacman.game import Agent
-from AI.Pacman.game import Directions
+from game import Agent
+from game import Directions
 import random
 
 class KeyboardAgent(Agent):

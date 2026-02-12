@@ -35,13 +35,13 @@ Good luck and happy searching!
 """
 
 from typing import List, Tuple, Any
-from AI.Pacman.game import Directions
-from AI.Pacman.game import Agent
-from AI.Pacman.game import Actions
-import AI.Pacman.util as util
+from game import Directions
+from game import Agent
+from game import Actions
+import util as util
 import time
-import AI.Pacman.search as search
-import AI.Pacman.pacman as pacman
+import search as search
+import pacman as pacman
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."

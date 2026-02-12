@@ -12,12 +12,12 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-from AI.Pacman.game import Agent
-from AI.Pacman.game import Actions
-from AI.Pacman.game import Directions
+from game import Agent
+from game import Actions
+from game import Directions
 import random
-from AI.Pacman.util import manhattanDistance
-import AI.Pacman.util as util
+from util import manhattanDistance
+import util
 
 class GhostAgent( Agent ):
     def __init__( self, index ):

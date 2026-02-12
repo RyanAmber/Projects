@@ -25,11 +25,13 @@ public class ChessBoardNode {
         ChessPlayer p=new ChessPlayer(2);
         int moves=data.halfmoveClock;
         if(depth==0) {
-            double score=p.score(data.getBoard(),playerTurn,moves,p.getWeights(),boardStates);
+            double score=p.score(data.getBoard(),playerTurn=='w'?'b':'w',moves,p.getWeights(),boardStates);
             return score;
         }
         double bestScore = playerTurn == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         for (ChessBoardNode child : nextMoves) {
+            child.getAllNextMoves();
+            //child.playerTurn=child.playerTurn=='w'?'b':'w';
             double childScore = child.getScoreAtDepth(depth - 1);
             if (playerTurn == 'w') {
                 bestScore = Math.max(bestScore, childScore);
@@ -43,6 +45,7 @@ public class ChessBoardNode {
         return nextMoves;
     }
     public void getAllNextMoves(){
+        this.nextMoves=new ArrayList<ChessBoardNode>();
         List<List<Integer>> possibleMoves = data.getAllLegalMoves(playerTurn);
         for (List<Integer> move : possibleMoves) {
             ChessBoard newBoard = new ChessBoard();

@@ -75,7 +75,7 @@ public class ChessPlayer {
             List<ChessBoardNode> bestNodes = new ArrayList<>();
             double eps = 1e-8;//Slight randomness
             for (ChessBoardNode child : rootNode.getNextMoves()) {
-                double moveScore = child.getScoreAtDepth(0);
+                double moveScore = child.getScoreAtDepth(2);
                 if (team == 'w') {
                     if (moveScore > bestScore + eps) {
                         bestScore = moveScore;
@@ -265,7 +265,7 @@ public class ChessPlayer {
         int kY=-1;
         int oX=-1;
         int oY=-1;
-        int score=0;
+        int score=100;
         for (int r=0;r<8;r++){
             for (int c=0;c<8;c++){
                 if (board[r][c]!=null){
