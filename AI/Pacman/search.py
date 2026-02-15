@@ -95,6 +95,7 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     frontier.push(start)
     explored=set()
     while True:
+        #print(frontier.list)
         if frontier.isEmpty():
             raise Exception("no solution")
         node=frontier.pop()
@@ -107,8 +108,8 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
             return actions
         explored.add(node[0])
         for successor in problem.getSuccessors(node[0]):
-            in_frontier = lambda state: any((item[0] == state) if isinstance(item, (list, tuple)) else (item == state) for item in frontier.list)
-            if successor[0] not in explored and not in_frontier(successor[0]):
+            #in_frontier = lambda state: any((item[0] == state) if isinstance(item, (list, tuple)) else (item == state) for item in frontier.list)
+            if successor[0] not in explored and not successor in frontier.list:
                 successor=(successor[0], successor[1], successor[2], node)
                 frontier.push(successor)
         
