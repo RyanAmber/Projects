@@ -14,7 +14,7 @@
 
 import sys
 import re
-import testClasses as testClasses
+import testClasses
 import textwrap
 
 # import project specific code

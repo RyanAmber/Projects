@@ -134,7 +134,7 @@ import py_compile
 
 def loadModuleFile(moduleName, filePath):
     # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
-    spec = importlib.util.spec_from_file_location(moduleName, filePath)
+    spec = importlib.util.spec_from_file_location(moduleName, "AI/Pacman/"+filePath)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -235,7 +235,7 @@ def getDepends(testParser, testRoot, question):
 
 # get list of questions to grade
 def getTestSubdirs(testParser, testRoot, questionToGrade):
-    problemDict = testParser.TestParser(os.path.join(testRoot, 'CONFIG')).parse()
+    problemDict = testParser.TestParser(os.path.join("AI/Pacman/"+testRoot, 'CONFIG')).parse()
     if questionToGrade != None:
         questions = getDepends(testParser, testRoot, questionToGrade)
         if len(questions) > 1:
@@ -252,8 +252,8 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
             printTestCase=False, questionToGrade=None, display=None):
     # imports of testbench code.  note that the testClasses import must follow
     # the import of student code due to dependencies
-    import AI.Pacman.testParser as testParser
-    import AI.Pacman.testClasses as testClasses
+    import testParser
+    import testClasses
     for module in moduleDict:
         setattr(sys.modules[__name__], module, moduleDict[module])
 
@@ -261,7 +261,7 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
     questionDicts = {}
     test_subdirs = getTestSubdirs(testParser, testRoot, questionToGrade)
     for q in test_subdirs:
-        subdir_path = os.path.join(testRoot, q)
+        subdir_path = "AI/Pacman/"+os.path.join(testRoot, q)
         if not os.path.isdir(subdir_path) or q[0] == '.':
             continue
 
@@ -305,7 +305,7 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
         questions.append((q, question.getMaxPoints()))
 
     grades = grading.Grades(projectParams.PROJECT_NAME, questions,
-                            gsOutput=gsOutput, edxOutput=edxOutput, muteOutput=muteOutput)
+    gsOutput=gsOutput, edxOutput=edxOutput, muteOutput=muteOutput)
     if questionToGrade == None:
         for q in questionDicts:
             for prereq in questionDicts[q].get('depends', '').split():
@@ -322,11 +322,11 @@ def getDisplay(graphicsByDefault, options=None):
         graphics = False
     if graphics:
         try:
-            import AI.Pacman.graphicsDisplay as graphicsDisplay
+            import graphicsDisplay
             return graphicsDisplay.PacmanGraphics(1, frameTime=.05)
         except ImportError:
             pass
-    import AI.Pacman.textDisplay as textDisplay
+    import textDisplay
     return textDisplay.NullGraphics()
 
 

@@ -19,7 +19,7 @@ import time
 import json
 import traceback
 from collections import defaultdict
-import AI.Pacman.util as util
+import util
 
 class Grades:
   "A data structure for project grades, along with formatting code to display them"

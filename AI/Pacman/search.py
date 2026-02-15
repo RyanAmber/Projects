@@ -90,12 +90,54 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start=(problem.getStartState(),None,0,None)
+    frontier=util.Stack()
+    frontier.push(start)
+    explored=set()
+    while True:
+        if frontier.isEmpty():
+            raise Exception("no solution")
+        node=frontier.pop()
+        if problem.isGoalState(node[0]):
+            actions=[]
+            while node!=start:
+                actions.append(node[1])
+                node=node[3]
+            actions.reverse()
+            return actions
+        explored.add(node[0])
+        for successor in problem.getSuccessors(node[0]):
+            in_frontier = lambda state: any((item[0] == state) if isinstance(item, (list, tuple)) else (item == state) for item in frontier.list)
+            if successor[0] not in explored and not in_frontier(successor[0]):
+                successor=(successor[0], successor[1], successor[2], node)
+                frontier.push(successor)
+        
+        
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start=(problem.getStartState(),None,0,None)
+    frontier=util.Queue()
+    frontier.push(start)
+    explored=set()
+    while True:
+        if frontier.isEmpty():
+            raise Exception("no solution")
+        node=frontier.pop()
+        if problem.isGoalState(node[0]):
+            actions=[]
+            while node!=start:
+                actions.append(node[1])
+                node=node[3]
+            actions.reverse()
+            return actions
+        explored.add(node[0])
+        for successor in problem.getSuccessors(node[0]):
+            in_frontier = lambda state: any((item[0] == state) if isinstance(item, (list, tuple)) else (item == state) for item in frontier.list)
+            if successor[0] not in explored and not in_frontier(successor[0]):
+                successor=(successor[0], successor[1], successor[2], node)
+                frontier.push(successor)
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
