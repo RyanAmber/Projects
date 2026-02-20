@@ -123,8 +123,6 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     frontier.push(start)
     explored=set()
     while True:
-        if frontier.isEmpty():
-            raise Exception("no solution")
         node=frontier.pop()
         if problem.isGoalState(node[0]):
             actions=[]
@@ -139,6 +137,15 @@ def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
             if successor[0] not in explored and not in_frontier(successor[0]):
                 successor=(successor[0], successor[1], successor[2], node)
                 frontier.push(successor)
+        if problem.isGoalState(node[0]):
+            actions=[]
+            while node!=start:
+                actions.append(node[1])
+                node=node[3]
+            actions.reverse()
+            return actions
+        if frontier.isEmpty():
+            raise Exception("no solution")
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
     """Search the node of least total cost first."""
@@ -179,31 +186,38 @@ def nullHeuristic(state, problem=None) -> float:
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    start=(problem.getStartState(),None,0,None)#location,action,cost,previous
-    frontier=util.PriorityQueue()
-    frontier.push(start,0)
-    explored=set()
+    start = (problem.getStartState(), None, 0, None)  # (state, action, g, parent)
+    frontier = util.PriorityQueue()
+    frontier_costs = {start[0]: 0}
+    frontier.push(start, heuristic(start[0], problem))
+
     while True:
         if frontier.isEmpty():
             raise Exception("no solution")
-        node=frontier.pop()
+        node = frontier.pop()
+        # node: (state, action, g, parent)
         if problem.isGoalState(node[0]):
-            actions=[]
-            while node!=start:
+            actions = []
+            while node != start:
                 actions.append(node[1])
-                node=node[3]
+                node = node[3]
             actions.reverse()
             return actions
-        if not node[0] in explored:
-            explored.add(node[0])
-        else:
-            continue
-        for successor in problem.getSuccessors(node[0]):
-            #in_frontier = lambda state: any((item[0] == state) if isinstance(item, (list, tuple)) else (item == state) for item in frontier.heap)
-            if successor[0] not in explored and not successor[0] in frontier.heap:
-                successor=(successor[0], successor[1], successor[2]+node[2], node)
-                action=[successor[1]]
-                frontier.push(successor,successor[2]+1.0)
+
+
+        for succ_state, succ_action, succ_cost in problem.getSuccessors(node[0]):
+            g = node[2] + succ_cost
+            # If this successor is not in frontier or we've found a better g, push/update it
+            prev_g = frontier_costs.get(succ_state)
+            if prev_g is None or g < prev_g:
+                frontier_costs[succ_state] = g
+                successor = (succ_state, succ_action, g, node)
+                f = g + heuristic(succ_state, problem)
+                #print(str(f)+" "+str(heuristic(succ_state, problem))+" "+str(succ_state))
+                if hasattr(frontier, 'update'):
+                    frontier.update(successor, f)
+                else:
+                    frontier.push(successor, f)
 
 # Abbreviations
 bfs = breadthFirstSearch

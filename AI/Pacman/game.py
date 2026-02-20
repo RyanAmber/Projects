@@ -475,7 +475,7 @@ class GameStateData:
         return '<'
 
     def _ghostStr( self, dir ):
-        return 'G'
+        #return 'G'
         if dir == Directions.NORTH:
             return 'M'
         if dir == Directions.SOUTH:
