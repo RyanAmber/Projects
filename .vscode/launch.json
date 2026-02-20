@@ -8,14 +8,14 @@
             "name": "Python Debugger: Pacman",
             "type": "debugpy",
             "request": "launch",
-            "program": "/workspaces/AOA/AI/Pacman/pacman.py",
+            "program": "/workspaces/AOA/AI/MultiAgentPacman/pacman.py",
             "console": "integratedTerminal"
         },
         {
             "name": "Python Debugger: Autograder",
             "type": "debugpy",
             "request": "launch",
-            "program": "/workspaces/AOA/AI/Pacman/autograder.py",
+            "program": "/workspaces/AOA/AI/MultiAgentPacman/autograder.py",
             "console": "integratedTerminal"
         },
         {

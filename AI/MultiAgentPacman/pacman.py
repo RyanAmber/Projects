@@ -525,9 +525,9 @@ def readCommand(argv):
     parser.add_option('-p', '--pacman', dest='pacman',
                       help=default(
                           'the agent TYPE in the pacmanAgents module to use'),
-                      metavar='TYPE', default='KeyboardAgent')
+                      metavar='TYPE', default='ReflexAgent')
     parser.add_option('-t', '--textGraphics', action='store_true', dest='textGraphics',
-                      help='Display output as text only', default=False)
+                      help='Display output as text only', default=True)
     parser.add_option('-q', '--quietTextGraphics', action='store_true', dest='quietGraphics',
                       help='Generate minimal output and no graphics', default=False)
     parser.add_option('-g', '--ghosts', dest='ghost',
@@ -626,11 +626,14 @@ def readCommand(argv):
 def loadAgent(pacman, nographics):
     # Looks through all pythonPath Directories for the right module,
     pythonPathStr = os.path.expandvars("$PYTHONPATH")
-    if pythonPathStr.find(';') == -1:
-        pythonPathDirs = pythonPathStr.split(':')
+    if pythonPathStr and pythonPathStr != "$PYTHONPATH":
+        if pythonPathStr.find(';') == -1:
+            pythonPathDirs = pythonPathStr.split(':')
+        else:
+            pythonPathDirs = pythonPathStr.split(';')
     else:
-        pythonPathDirs = pythonPathStr.split(';')
-    pythonPathDirs.append('.')
+        pythonPathDirs = []
+    pythonPathDirs.append(os.path.dirname(os.path.abspath(__file__)))
 
     for moduleDir in pythonPathDirs:
         if not os.path.isdir(moduleDir):
