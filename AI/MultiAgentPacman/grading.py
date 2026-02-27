@@ -103,7 +103,7 @@ class Grades:
         print('------------------')
         print('Total: %d/%d' %
               (self.points.totalCount(), sum(self.maxes.values())))
-        if bonusPic and self.points.totalCount() == 25:
+        if self.points.totalCount() >= 20:
             print("""
 
                      ALL HAIL GRANDPAC.

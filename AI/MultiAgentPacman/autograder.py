@@ -137,13 +137,13 @@ def loadModuleString(moduleSource):
 
 def loadModuleFile(moduleName, filePath):
     # https://docs.python.org/3/library/importlib.html#importing-a-source-file-directly
-    spec = importlib.util.spec_from_file_location(moduleName, filePath)
+    spec = importlib.util.spec_from_file_location(moduleName, 'AI/MultiAgentPacman/'+filePath)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-def readFile(path, root=""):
+def readFile(path, root="AI/MultiAgentPacman/"):
     "Read file from disk at specified path and return as string"
     with open(os.path.join(root, path), 'r') as handle:
         return handle.read()
@@ -226,6 +226,7 @@ def runTest(testName, moduleDict, printTestCase=False, display=None):
 
 # returns all the tests you need to run in order to run question
 def getDepends(testParser, testRoot, question):
+    testRoot='AI/MultiAgentPacman/'+testRoot
     allDeps = [question]
     questionDict = testParser.TestParser(
         os.path.join(testRoot, question, 'CONFIG')).parse()
@@ -238,6 +239,7 @@ def getDepends(testParser, testRoot, question):
 
 # get list of questions to grade
 def getTestSubdirs(testParser, testRoot, questionToGrade):
+    testRoot='AI/MultiAgentPacman/'+testRoot
     problemDict = testParser.TestParser(
         os.path.join(testRoot, 'CONFIG')).parse()
     if questionToGrade != None:
@@ -266,7 +268,7 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
     questionDicts = {}
     test_subdirs = getTestSubdirs(testParser, testRoot, questionToGrade)
     for q in test_subdirs:
-        subdir_path = os.path.join(testRoot, q)
+        subdir_path = os.path.join('AI/MultiAgentPacman/'+testRoot, q)
         if not os.path.isdir(subdir_path) or q[0] == '.':
             continue
 
