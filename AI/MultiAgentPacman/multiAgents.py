@@ -125,11 +125,13 @@ class MultiAgentSearchAgent(Agent):
     is another abstract class.
     """
 
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '3'):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
         self.count=0
+        self.prevx=0
+        self.prevy=0
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
@@ -239,6 +241,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         self.count=0
         for action in gameState.getLegalActions(0):
             index=self.index
+            self.prevx=gameState.getPacmanPosition()[0]
+            self.prevy=gameState.getPacmanPosition()[1]
             successor=gameState.generateSuccessor(0,action)
             self.count+=1
             if index+1<gameState.getNumAgents():
@@ -303,9 +307,9 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        score=successorGameState.getScore()*6
-        if action=='Stop':
-            score-=20
+        score=successorGameState.getScore()*5
+        if action=='Stop' or newPos[0]==self.prevx and newPos[1]==self.prevy:
+            score-=7
             #print('No stop')
             #util.pause()
         for action2 in successorGameState.getLegalActions():
@@ -316,11 +320,17 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                     score-=1000
                 if abs(finalState.getPacmanPosition()[0]-ghost.getPosition()[0])<3 and abs(finalState.getPacmanPosition()[1]-ghost.getPosition()[1])<3:
                     score-=10
+                else:
+                    score+=(abs(finalState.getPacmanPosition()[0]-ghost.getPosition()[0])+abs(finalState.getPacmanPosition()[1]-ghost.getPosition()[1]))/2
         dist=10000
         for x in range(newFood.width-1):
             for y in range(newFood.height-1):
                 if(newFood[x][y]):
-                    dist=min(dist,abs(newPos[0]-x)+abs(newPos[1]-y))
+                    dx=newPos[0]-x
+                    dy=newPos[1]-y
+                    if dx<3 and dy<3:
+                        score+=2
+                    dist=min(dist,abs(dx)+abs(dy))
         for time in newScaredTimes:
             score+=time/5
         if newFood.count()>0:

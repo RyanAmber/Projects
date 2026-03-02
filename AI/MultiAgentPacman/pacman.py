@@ -378,14 +378,14 @@ class PacmanRules:
         x, y = position
         # Eat food
         if state.data.food[x][y]:
-            state.data.scoreChange += 10
+            state.data.scoreChange += 13
             state.data.food = state.data.food.copy()
             state.data.food[x][y] = False
             state.data._foodEaten = position
             # TODO: cache numFood?
             numFood = state.getNumFood()
             if numFood == 0 and not state.data._lose:
-                state.data.scoreChange += 500
+                state.data.scoreChange += 5000
                 state.data._win = True
         # Eat capsule
         if(position in state.getCapsules()):
@@ -466,7 +466,7 @@ class GhostRules:
             state.data._eaten[agentIndex] = True
         else:
             if not state.data._win:
-                state.data.scoreChange -= 500
+                state.data.scoreChange -= 5000
                 state.data._lose = True
     collide = staticmethod(collide)
 
@@ -517,7 +517,7 @@ def readCommand(argv):
     parser = OptionParser(usageStr)
 
     parser.add_option('-n', '--numGames', dest='numGames', type='int',
-                      help=default('the number of GAMES to play'), metavar='GAMES', default=1)
+                      help=default('the number of GAMES to play'), metavar='GAMES', default=10)
     parser.add_option('-l', '--layout', dest='layout',
                       help=default(
                           'the LAYOUT_FILE from which to load the map layout'),
@@ -529,11 +529,11 @@ def readCommand(argv):
     parser.add_option('-t', '--textGraphics', action='store_true', dest='textGraphics',
                       help='Display output as text only', default=True)
     parser.add_option('-q', '--quietTextGraphics', action='store_true', dest='quietGraphics',
-                      help='Generate minimal output and no graphics', default=False)
+                      help='Generate minimal output and no graphics', default=True)
     parser.add_option('-g', '--ghosts', dest='ghost',
                       help=default(
                           'the ghost agent TYPE in the ghostAgents module to use'),
-                      metavar='TYPE', default='DirectionalGhost')
+                        metavar='TYPE', default='DirectionalGhost')
     parser.add_option('-k', '--numghosts', type='int', dest='numGhosts',
                       help=default('The maximum number of ghosts to use'), default=10)
     parser.add_option('-z', '--zoom', type='float', dest='zoom',
@@ -553,7 +553,7 @@ def readCommand(argv):
     parser.add_option('-c', '--catchExceptions', action='store_true', dest='catchExceptions',
                       help='Turns on exception handling and timeouts during games', default=False)
     parser.add_option('--timeout', dest='timeout', type='int',
-                      help=default('Maximum length of time an agent can spend computing in a single game'), default=30)
+                      help=default('Maximum length of time an agent can spend computing in a single game'), default=60)
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:
@@ -703,10 +703,10 @@ def runGames(layout, pacman, ghosts, display, numGames, record, numTraining=0, c
             import pickle
             fname = ('recorded-game-%d' % (i + 1)) + \
                 '-'.join([str(t) for t in time.localtime()[1:6]])
-            f = file(fname, 'w')
+            #f = file(fname, 'w')
             components = {'layout': layout, 'actions': game.moveHistory}
-            pickle.dump(components, f)
-            f.close()
+            #pickle.dump(components, f)
+            #f.close()
 
     if (numGames-numTraining) > 0:
         scores = [game.state.getScore() for game in games]
