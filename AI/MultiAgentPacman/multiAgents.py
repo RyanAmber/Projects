@@ -125,7 +125,7 @@ class MultiAgentSearchAgent(Agent):
     is another abstract class.
     """
 
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '3'):
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
         self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
@@ -248,12 +248,10 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if index+1<gameState.getNumAgents():
                 index+=1
             score=self.minimax(successor,action,index,self.depth)
-            #print(score)
             if score>best:
                 bestmove=action
                 best=score
-        #print(self.count+1)
-        #util.pause()
+        #print("Score: "+str(round(best/5.0)))
         return bestmove
     
     def minimax(self, gameState:GameState, action,index,depth):
@@ -309,7 +307,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         score=successorGameState.getScore()*5
         if action=='Stop' or newPos[0]==self.prevx and newPos[1]==self.prevy:
-            score-=7
+            score-=2
             #print('No stop')
             #util.pause()
         for action2 in successorGameState.getLegalActions():
@@ -336,7 +334,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         if newFood.count()>0:
             #print(dist)
             #util.pause()
-            score-=dist*4
+            score-=dist*3
+        #print(score)
         return score
 
 # Abbreviation
