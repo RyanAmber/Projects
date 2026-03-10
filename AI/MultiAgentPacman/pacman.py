@@ -517,11 +517,11 @@ def readCommand(argv):
     parser = OptionParser(usageStr)
 
     parser.add_option('-n', '--numGames', dest='numGames', type='int',
-                      help=default('the number of GAMES to play'), metavar='GAMES', default=20)
+                      help=default('the number of GAMES to play'), metavar='GAMES', default=30)
     parser.add_option('-l', '--layout', dest='layout',
                       help=default(
                           'the LAYOUT_FILE from which to load the map layout'),
-                      metavar='LAYOUT_FILE', default='custom')
+                      metavar='LAYOUT_FILE', default='testClassic')
     parser.add_option('-p', '--pacman', dest='pacman',
                       help=default(
                           'the agent TYPE in the pacmanAgents module to use'),
@@ -533,7 +533,7 @@ def readCommand(argv):
     parser.add_option('-g', '--ghosts', dest='ghost',
                       help=default(
                           'the ghost agent TYPE in the ghostAgents module to use'),
-                        metavar='TYPE', default='DirectionalGhost')
+                        metavar='TYPE', default='RandomGhost')
     parser.add_option('-k', '--numghosts', type='int', dest='numGhosts',
                       help=default('The maximum number of ghosts to use'), default=10)
     parser.add_option('-z', '--zoom', type='float', dest='zoom',
@@ -553,7 +553,7 @@ def readCommand(argv):
     parser.add_option('-c', '--catchExceptions', action='store_true', dest='catchExceptions',
                       help='Turns on exception handling and timeouts during games', default=False)
     parser.add_option('--timeout', dest='timeout', type='int',
-                      help=default('Maximum length of time an agent can spend computing in a single game'), default=60)
+                      help=default('Maximum length of time an agent can spend computing in a single game'), default=6000)
 
     options, otherjunk = parser.parse_args(argv)
     if len(otherjunk) != 0:

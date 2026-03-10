@@ -62,7 +62,7 @@ def Guess(knowledge):
 done=False
 while not done:
     val=random.randint(0,3)
-    if val==0:
+    if val<3:
         Guess(knowledge)
     else:
         get_Card(knowledge)

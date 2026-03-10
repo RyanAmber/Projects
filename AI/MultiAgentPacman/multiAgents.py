@@ -130,8 +130,7 @@ class MultiAgentSearchAgent(Agent):
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
         self.count=0
-        self.prevx=0
-        self.prevy=0
+        self.dist=0
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
@@ -241,8 +240,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         self.count=0
         for action in gameState.getLegalActions(0):
             index=self.index
-            self.prevx=gameState.getPacmanPosition()[0]
-            self.prevy=gameState.getPacmanPosition()[1]
             successor=gameState.generateSuccessor(0,action)
             self.count+=1
             if index+1<gameState.getNumAgents():
@@ -306,8 +303,8 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         "*** YOUR CODE HERE ***"
         score=successorGameState.getScore()*5
-        if action=='Stop' or newPos[0]==self.prevx and newPos[1]==self.prevy:
-            score-=2
+        if action=='Stop':
+            score-=1
             #print('No stop')
             #util.pause()
         for action2 in successorGameState.getLegalActions():
@@ -316,10 +313,11 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             for ghost in newGhostStates:
                 if finalState.getPacmanPosition()==ghost.getPosition():
                     score-=1000
-                if abs(finalState.getPacmanPosition()[0]-ghost.getPosition()[0])<3 and abs(finalState.getPacmanPosition()[1]-ghost.getPosition()[1])<3:
-                    score-=10
-                else:
-                    score+=(abs(finalState.getPacmanPosition()[0]-ghost.getPosition()[0])+abs(finalState.getPacmanPosition()[1]-ghost.getPosition()[1]))/2
+        for ghost in newGhostStates:
+            if abs(successorGameState.getPacmanPosition()[0]-ghost.getPosition()[0])<3 and abs(successorGameState.getPacmanPosition()[1]-ghost.getPosition()[1])<3:
+                score-=10
+            else:
+                score+=(abs(successorGameState.getPacmanPosition()[0]-ghost.getPosition()[0])+abs(successorGameState.getPacmanPosition()[1]-ghost.getPosition()[1]))/2
         dist=10000
         for x in range(newFood.width-1):
             for y in range(newFood.height-1):

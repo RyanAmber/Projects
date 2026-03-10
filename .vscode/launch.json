@@ -21,13 +21,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python Autograder",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "/workspaces/AOA/AI/MultiAgentPacman/autograder.py",
-            "console": "integratedTerminal"
-        },
-        {
             "type": "java",
             "name": "Java Current",
             "request": "launch",
