@@ -303,12 +303,12 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
         "*** YOUR CODE HERE ***"
         score=successorGameState.getScore()*5
-        if action=='Stop':
-            score-=1
+        #if action=='Stop':
+        #    score-=1
             #print('No stop')
             #util.pause()
         for action2 in successorGameState.getLegalActions():
-            score+=5
+            score+=1
             finalState=successorGameState.generatePacmanSuccessor(action2)
             for ghost in newGhostStates:
                 if finalState.getPacmanPosition()==ghost.getPosition():
@@ -330,10 +330,10 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         for time in newScaredTimes:
             score+=time/5
         if newFood.count()>0:
-            #print(dist)
-            #util.pause()
+            #print(str(action)+str(dist))
             score-=dist*3
         #print(score)
+        #util.pause()
         return score
 
 # Abbreviation
