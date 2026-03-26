@@ -244,12 +244,49 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             self.count+=1
             if index+1<gameState.getNumAgents():
                 index+=1
-            score=self.minimax(successor,action,index,self.depth)
+            dist=self.bfs_nearest_food(successor)
+            if self.bfs_nearest_food(gameState)+1<dist:
+                dist=self.bfs_nearest_food(gameState)
+            print(str(action)+": "+str(dist))
+            #if dist>10:
+                #util.pause()
+            score=self.minimax(successor,action,index,self.depth)-dist*5
             if score>best:
                 bestmove=action
                 best=score
-        #print("Score: "+str(round(best/5.0)))
+        print("Score: "+str(round(best/5.0)))
         return bestmove
+    
+    def bfs_nearest_food(self, gameState: GameState):
+        """
+        BFS from Pacman position that stops at the first food found.
+        Returns the distance to the nearest food.
+        """
+        from collections import deque
+        
+        pacman_pos = gameState.getPacmanPosition()
+        food = gameState.getFood()
+        walls = gameState.getWalls()
+        
+        queue = deque([(pacman_pos, 0)])
+        visited = {pacman_pos}
+        
+        while queue:
+            (x, y), dist = queue.popleft()
+            
+            if food[x][y]:
+                return dist
+            
+            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                next_x, next_y = x + dx, y + dy
+                next_pos = (next_x, next_y)
+                
+                if (next_pos not in visited and 
+                    not walls[next_x][next_y]):
+                    visited.add(next_pos)
+                    queue.append((next_pos, dist + 1))
+        
+        return -1
     
     def minimax(self, gameState:GameState, action,index,depth):
         if gameState.isWin() or gameState.isLose() or depth==0:
@@ -331,7 +368,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             score+=time/5
         if newFood.count()>0:
             #print(str(action)+str(dist))
-            score-=dist*3
+            score-=dist*0
         #print(score)
         #util.pause()
         return score

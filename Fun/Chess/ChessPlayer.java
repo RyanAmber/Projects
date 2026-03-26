@@ -32,7 +32,7 @@ public class ChessPlayer {
                 testboard[endrow][endcol] = testboard[startrow][startcol];
                 testboard[startrow][startcol] = null;
                 double[] weights=getWeights();//AI adjust
-                System.out.println("Testing move: " + (char)('a' + startcol) + (8 - startrow) + " to " + (char)('a' + endcol) + (8 - endrow));
+                //System.out.println("Testing move: " + (char)('a' + startcol) + (8 - startrow) + " to " + (char)('a' + endcol) + (8 - endrow));
                 scores.put(m,score(testboard,team,moves,weights,boardStates));
             }
             //System.out.println("All moves listed");
@@ -54,6 +54,25 @@ public class ChessPlayer {
                     bestMoves.add(entry.getKey());
                 }
             }
+            if (board.toString().equals(new ChessBoard().toString())){
+                if (team=='w'){
+                    bestMoves.add(Arrays.asList(6, 4, 4, 4));
+                    bestMoves.add(Arrays.asList(6, 3, 4, 3));
+                    bestMoves.add(Arrays.asList(7, 6, 5, 5));
+                    bestMoves.add(Arrays.asList(7, 1, 5, 2));
+                    bestMoves.add(Arrays.asList(6, 1, 5, 1));
+                    bestMoves.add(Arrays.asList(6, 2, 4, 2));
+                    bestMoves.add(Arrays.asList(6, 6, 5, 6));
+                }else{
+                    bestMoves.add(Arrays.asList(1, 4, 3, 4));
+                    bestMoves.add(Arrays.asList(1, 3, 3, 3));
+                    bestMoves.add(Arrays.asList(0, 6, 2, 5));
+                    bestMoves.add(Arrays.asList(0, 1, 2, 2));
+                    bestMoves.add(Arrays.asList(1, 6, 2, 6));
+                    bestMoves.add(Arrays.asList(1, 5, 3, 5));
+                    bestMoves.add(Arrays.asList(1, 1, 2, 1));
+                }
+            }
             List<Integer> moveIndices = bestMoves.get(new Random().nextInt(bestMoves.size()));
             move[0] = "" + (char)('a' + moveIndices.get(1)) + (8 - moveIndices.get(0));
             move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
@@ -69,31 +88,56 @@ public class ChessPlayer {
             System.out.println("Initial Score: " + score(board.copyBoard(), team, board.halfmoveClock, new double[]{0.0,1.0,3.0,3.0,5.0,9.0,0.02},boardStates));
             ChessBoard tempBoard = new ChessBoard();
             tempBoard.setupBoard(board.getBoard());
-            ChessBoardNode rootNode = new ChessBoardNode(tempBoard, team, boardStates, new ArrayList<>());
+            ChessBoardNode rootNode = new ChessBoardNode(tempBoard, team, boardStates, new ArrayList<>(),team);
             rootNode.getAllNextMoves();
             double bestScore = team == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             List<ChessBoardNode> bestNodes = new ArrayList<>();
-            double eps = 1e-8;//Slight randomness
             for (ChessBoardNode child : rootNode.getNextMoves()) {
-                double moveScore = child.getScoreAtDepth(2);
+                child.getAllNextMoves();
+                double moveScore = child.getScoreAtDepth(2, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 if (team == 'w') {
-                    if (moveScore > bestScore + eps) {
+                    if (moveScore > bestScore) {
                         bestScore = moveScore;
                         bestNodes.clear();
                         bestNodes.add(child);
-                    } else if (Math.abs(moveScore - bestScore) <= eps) {
+                    } else if (moveScore == bestScore) {
                         bestNodes.add(child);
                     }
                 } else {
-                    if (moveScore < bestScore - eps) {
+                    if (moveScore < bestScore) {
                         bestScore = moveScore;
                         bestNodes.clear();
                         bestNodes.add(child);
-                    } else if (Math.abs(moveScore - bestScore) <= eps) {
+                    } else if (moveScore == bestScore) {
                         bestNodes.add(child);
                     }
                 }
-                System.out.println(bestScore + " " + moveScore + " from "+(char)(child.getMove().get(1) + 'a') + (8 - child.getMove().get(0)) + " to " + (char)(child.getMove().get(3) + 'a') + (8 - child.getMove().get(2)));
+            }
+            ArrayList<List<String>> bestMoves=new ArrayList<List<String>>();
+            if (board.toString().equals(new ChessBoard().toString())){
+                if (team=='w'){
+                    bestMoves.add(Arrays.asList("e2","e4"));
+                    bestMoves.add(Arrays.asList("e2","e4"));
+                    bestMoves.add(Arrays.asList("d2","d4"));
+                    bestMoves.add(Arrays.asList("g1","f3"));
+                    bestMoves.add(Arrays.asList("b1","c3"));
+                    bestMoves.add(Arrays.asList("g1","f3"));
+                    bestMoves.add(Arrays.asList("b1","c3"));
+                    bestMoves.add(Arrays.asList("b2","b3"));
+                    bestMoves.add(Arrays.asList("c2","c4"));
+                    bestMoves.add(Arrays.asList("g2","g3"));
+                }else{
+                    bestMoves.add(Arrays.asList("e7","e5"));
+                    bestMoves.add(Arrays.asList("d7","d5"));
+                    bestMoves.add(Arrays.asList("e7","e5"));
+                    bestMoves.add(Arrays.asList("g8","f6"));
+                    bestMoves.add(Arrays.asList("b8","c6"));
+                    bestMoves.add(Arrays.asList("g8","f6"));
+                    bestMoves.add(Arrays.asList("b8","c6"));
+                    bestMoves.add(Arrays.asList("g7","g6"));
+                    bestMoves.add(Arrays.asList("f7","f5"));
+                    bestMoves.add(Arrays.asList("b7","b6"));
+                }
             }
             if (!bestNodes.isEmpty()) {
                 ChessBoardNode chosen = bestNodes.get(new Random().nextInt(bestNodes.size()));
@@ -103,6 +147,12 @@ public class ChessPlayer {
                     move[1] = "" + (char)('a' + moveIndices.get(3)) + (8 - moveIndices.get(2));
                 }
             }
+            System.out.println(bestScore);
+            bestMoves.add(Arrays.asList(move[0],move[1]));
+            List<String> moveIndices = bestMoves.get(new Random().nextInt(bestMoves.size()));
+            move[0] = moveIndices.get(0);
+            move[1] = moveIndices.get(1);
+            
 
         }
         System.out.println("Chosen move: " + move[0] + " to " + move[1]);
@@ -190,8 +240,8 @@ public class ChessPlayer {
         score-=0.4*rookFiles(board,'b');//AI adjust
         score+=1.2*pawnProgress(board,'w');//AI adjust
         score-=1.2*pawnProgress(board,'b');//AI adjust
-        score+=0.5*activePieces(board,'w');//AI adjust
-        score-=0.5*activePieces(board,'b');//AI adjust
+        score+=0.3*activePieces(board,'w');//AI adjust
+        score-=0.3*activePieces(board,'b');//AI adjust
         List<List<Integer>> allMoves = b.getAllLegalMoves('w');
         for (List<Integer> move : allMoves) {
             score+=weights[6];
@@ -254,7 +304,7 @@ public class ChessPlayer {
             score-=100*pawnSolve(board,'b');
             score-=500;
         } */
-       score+=Math.random()*0.1;
+       //score+=Math.random()*0.1;
         return Math.round(score*1000.0)/2000.0;
     }
     public int queenSolve(ChessPiece[][] board, char team){

@@ -406,7 +406,6 @@ class GameStateData:
             self.layout = prevState.layout
             self._eaten = prevState._eaten
             self.score = prevState.score
-
         self._foodEaten = None
         self._foodAdded = None
         self._capsuleEaten = None
@@ -513,7 +512,6 @@ class GameStateData:
         if dir == Directions.WEST:
             return '3'
         return 'E'
-
     def initialize(self, layout, numGhostAgents):
         """
         Creates an initial game state from a layout array (see layout.py).

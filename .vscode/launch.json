@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "Chess",
+            "request": "launch",
+            "mainClass": "/workspaces/AOA/Fun/Chess/ChessGame.java"
+        },
+        {
             "name": "Python Current",
             "type": "debugpy",
             "request": "launch",
@@ -12,7 +18,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python Pacman",
+            "name": "Pacman",
             "type": "debugpy",
             "request": "launch",
             "program": "/workspaces/AOA/AI/MultiAgentPacman/pacman.py",
