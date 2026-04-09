@@ -48,7 +48,7 @@ public class ChessBoardNode {
             for (ChessBoardNode child : nextMoves) {
                 child.getAllNextMoves();
                 double childScore = child.getScoreAtDepth(depth - 1, alpha, beta);
-                double weight = 1.0 / (depth + 2);
+                double weight = 1.0 / (depth + 1);
                 double blended = (1 - weight) * childScore + weight * currentScore;
                 bestScore = Math.max(bestScore, blended);
                 alpha = Math.max(alpha, bestScore);
@@ -62,7 +62,7 @@ public class ChessBoardNode {
             for (ChessBoardNode child : nextMoves) {
                 child.getAllNextMoves();
                 double childScore = child.getScoreAtDepth(depth - 1, alpha, beta);
-                double weight = 1.0 / (depth + 2);
+                double weight = 1.0 / (depth + 1);
                 double blended = (1 - weight) * childScore + weight * currentScore;
                 bestScore = Math.min(bestScore, blended);
                 beta = Math.min(beta, bestScore);

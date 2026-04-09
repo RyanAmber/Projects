@@ -69,7 +69,7 @@ public class ChessBoard {
         }
     }
 
-    public boolean movePiece(String from, String to, char player, Scanner scanner) {
+    public boolean movePiece(String from, String to, char player, Scanner scanner,int type) {
         int[] fromIdx = parsePosition(from);
         int[] toIdx = parsePosition(to);
         int end1=toIdx[0];
@@ -158,8 +158,11 @@ public class ChessBoard {
         // Promotion input
         if (isPromotion) {
             System.out.print("Promote to (Q, R, B, N): ");
-            //String promo = scanner.next().toUpperCase();
-            String promo = "Q"; // Auto-queen for simplicity
+            String promo="";
+            if (type==1)
+                promo = scanner.next().toUpperCase();
+            else
+                promo = "Q"; // Auto-queen for simplicity
             ChessPiece promoted = switch (promo) {
                 case "Q" -> new Queen(player);
                 case "R" -> new Rook(player);

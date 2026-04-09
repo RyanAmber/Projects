@@ -7,6 +7,9 @@ public class ChessPlayer {
     public ChessPlayer(int type){
         this.type=type;
     }
+    public int getType(){
+        return type;
+    }
     public String[] getMove(ChessBoard board, char team, Map<String, Integer> boardStates,Scanner s){
         String[] move=new String[2];
         if (type==1){  
@@ -92,7 +95,10 @@ public class ChessPlayer {
             rootNode.getAllNextMoves();
             double bestScore = team == 'w' ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             List<ChessBoardNode> bestNodes = new ArrayList<>();
+            int i=1;
             for (ChessBoardNode child : rootNode.getNextMoves()) {
+                System.out.println("Move "+i+" out of "+(rootNode.getNextMoves().size()));
+                i++;
                 child.getAllNextMoves();
                 double moveScore = child.getScoreAtDepth(2, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 if (team == 'w') {
@@ -196,7 +202,7 @@ public class ChessPlayer {
                                     case "Q": wmodifier-=9.0; break;//AI adjust
                                 }
                             }
-                            score-=0.1;
+                            score-=1;
                         }
                     }else if(board[i][j].getColor()=='b'){
                         ChessPiece temp=board[i][j];
@@ -221,7 +227,7 @@ public class ChessPlayer {
                                     case "Q": bmodifier+=9.0; break;//AI adjust
                                 }
                             }
-                            score+=0.1;
+                            score+=1;
                         }
                     }
                 }
@@ -238,8 +244,8 @@ public class ChessPlayer {
         score-=0.4*kingSafety(board,'b');//AI adjust
         score+=0.4*rookFiles(board,'w');//AI adjust
         score-=0.4*rookFiles(board,'b');//AI adjust
-        score+=1.2*pawnProgress(board,'w');//AI adjust
-        score-=1.2*pawnProgress(board,'b');//AI adjust
+        score+=1.0*pawnProgress(board,'w');//AI adjust
+        score-=1.0*pawnProgress(board,'b');//AI adjust
         score+=0.3*activePieces(board,'w');//AI adjust
         score-=0.3*activePieces(board,'b');//AI adjust
         List<List<Integer>> allMoves = b.getAllLegalMoves('w');
@@ -433,13 +439,16 @@ public class ChessPlayer {
                 if (newRow>=0&&newRow<8&&newCol>=0&&newCol<8){
                     if (board[newRow][newCol]==null||board[newRow][newCol].getColor()==team){
                         safety+=0.5;//AI adjust
+                        if (board[newRow][newCol]!=null&&board[newRow][newCol].getColor()==team&& board[newRow][newCol].getType()=="P"){
+                            safety+=1;
+                        }
                     }else if (board[newRow][newCol].getColor()!=team){
                         safety-=1;//AI adjust
                     }else if(b.isSquareAttacked(newRow,newCol,team=='w'?'b':'w')){
                         safety-=1;//AI adjust
                     }
                 }else{
-                    safety+=0.5;//AI adjust
+                    safety+=1;//AI adjust
                 }
             }
         }
@@ -481,7 +490,7 @@ public class ChessPlayer {
                 }
             }
         }
-        return progress*0.9;//AI adjust
+        return progress;//AI adjust
     }
     public static double activePieces(ChessPiece[][] board, char team){
         double active=0;

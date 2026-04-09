@@ -28,5 +28,6 @@ public class Test2{
             }
             System.out.println((total+add)%1000000007);
         }
+        s.close();
     }
 }

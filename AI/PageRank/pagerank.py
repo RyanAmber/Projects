@@ -103,29 +103,26 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    page=random.choice(list(corpus.keys()))
-    freq={}
-    leave=False
-    i=0
-    while not(leave):
-        dist=transition_model(corpus,page,damping_factor)
-        val=random.random()
-        for j in range(1,len(list(dist.keys()))):
-            dist[list(dist.keys())[j]]=dist[list(dist.keys())[j]]+dist[list(dist.keys())[j-1]]
-        end=False
-        for j in list(dist.keys()):
-            if end:
-                continue
-            if dist.get(j)>val:
-                freq[j]=freq.get(j,0)+1
-                page=j
-                end=True
-        i+=1
-        if i>1000000:
-            break;
-    for j in list(freq.keys()):
-        freq[j]=freq.get(j)/i
-    return freq
+    length=len(corpus.keys())
+    ranks={page:1/length for page in corpus}
+    for page in corpus:
+        if len(corpus[page])==0:
+            corpus[page]=set(corpus.keys())
+    while True:
+        new={}
+        for page in corpus:
+            rand=(1-damping_factor)/length
+            sum=0
+            for opage in corpus:
+                if page in corpus[opage]:
+                    sum+=ranks[opage]/len(corpus[opage])
+            new[page]=rand+damping_factor+sum
+        if all(abs(new[p]-ranks[p])<0.001 for p in ranks):
+            break
+        ranks=new
+    return ranks
+
+
 
 
 if __name__ == "__main__":

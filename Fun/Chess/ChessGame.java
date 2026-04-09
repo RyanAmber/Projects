@@ -27,6 +27,7 @@ public class ChessGame {
 
                 if (board.isInCheckmate(currentPlayer)) {
                     System.out.println((currentPlayer == 'w' ? "White" : "Black") + " is in checkmate. Game over!");
+                    System.out.println("The game was "+board.fullmoveNumber+" moves.");
                     if (currentPlayer == 'w') {
                         w2++;
                     } else {
@@ -84,7 +85,7 @@ public class ChessGame {
                      }
                     */
 
-                    boolean moveResult = board.movePiece(move[0], move[1], currentPlayer, scanner);
+                    boolean moveResult = board.movePiece(move[0], move[1], currentPlayer, scanner,currentPlayer=='w'?p1.getType():p2.getType());
                     if (moveResult) {
                         currentPlayer = (currentPlayer == 'w') ? 'b' : 'w';
                         if(boardStates.containsKey(board.toString())) {
