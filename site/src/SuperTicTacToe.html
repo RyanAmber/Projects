@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Tic-Tac-Toe</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090c10;
+    --panel: #0d1117;
+    --border: #1e2a3a;
+    --x-color: #00e5ff;
+    --x-glow: rgba(0,229,255,0.35);
+    --o-color: #ff4b6e;
+    --o-glow: rgba(255,75,110,0.35);
+    --active-glow: rgba(255,215,0,0.4);
+    --active-border: #ffd700;
+    --dim: #3a4a5a;
+    --text: #c8d8e8;
+    --text-dim: #5a7080;
+    --font-main: 'Exo 2', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-main);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 12px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 30%, rgba(0,229,255,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 70%, rgba(255,75,110,0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  h1 {
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 span.x { color: var(--x-color); }
+  h1 span.o { color: var(--o-color); }
+
+  .subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ====== SETUP SCREEN ====== */
+  #setup {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .instructions {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .instructions strong { color: var(--text); }
+
+  .setup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .setup-row label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .player-badge {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+
+  .player-badge.x { color: var(--x-color); border: 1px solid var(--x-color); }
+  .player-badge.o { color: var(--o-color); border: 1px solid var(--o-color); }
+
+  select {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+    min-width: 130px;
+  }
+
+  select:focus { border-color: var(--x-color); }
+
+  .btn {
+    background: transparent;
+    color: var(--x-color);
+    border: 1px solid var(--x-color);
+    padding: 11px 32px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--x-color);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover { color: var(--bg); box-shadow: 0 0 20px var(--x-glow); }
+  .btn:hover::before { opacity: 1; }
+  .btn span { position: relative; z-index: 1; }
+
+  .btn-sm {
+    padding: 7px 20px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    border-color: var(--border);
+  }
+  .btn-sm:hover { color: var(--text); border-color: var(--text-dim); box-shadow: none; }
+  .btn-sm:hover::before { opacity: 0; }
+
+  /* ====== GAME SCREEN ====== */
+  #game { display: none; position: relative; z-index: 1; width: 100%; max-width: 620px; }
+
+  #status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+
+  #status {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    color: var(--text);
+    flex: 1;
+    min-height: 1.4em;
+    transition: color 0.3s;
+  }
+
+  #status.x-turn { color: var(--x-color); }
+  #status.o-turn { color: var(--o-color); }
+  #status.win { color: #ffd700; }
+
+  .score-display {
+    display: flex;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+  }
+
+  .score-box {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .score-box.x { border-color: var(--x-color); color: var(--x-color); }
+  .score-box.o { border-color: var(--o-color); color: var(--o-color); }
+
+  /* ====== OUTER BOARD ====== */
+  #outer-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: var(--border);
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    width: 100%;
+    aspect-ratio: 1;
+  }
+
+  .sub-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: #080b0f;
+    padding: 4px;
+    border-radius: 6px;
+    position: relative;
+    border: 1px solid #111820;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+
+  .sub-board.active {
+    border-color: var(--active-border);
+    box-shadow: 0 0 14px var(--active-glow), inset 0 0 8px rgba(255,215,0,0.05);
+  }
+
+  .sub-board.choosable {
+    border-color: #888;
+    box-shadow: 0 0 10px rgba(200,200,200,0.2);
+    cursor: pointer;
+    animation: pulse-choosable 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-choosable {
+    0%, 100% { box-shadow: 0 0 8px rgba(200,200,200,0.2); }
+    50% { box-shadow: 0 0 18px rgba(200,200,200,0.4); }
+  }
+
+  .cell {
+    background: var(--panel);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+    cursor: default;
+    user-select: none;
+    aspect-ratio: 1;
+    transition: background 0.15s, box-shadow 0.15s;
+    border: 1px solid var(--border);
+  }
+
+  .cell.X {
+    color: var(--x-color);
+    text-shadow: 0 0 8px var(--x-glow);
+    border-color: rgba(0,229,255,0.15);
+  }
+
+  .cell.O {
+    color: var(--o-color);
+    text-shadow: 0 0 8px var(--o-glow);
+    border-color: rgba(255,75,110,0.15);
+  }
+
+  .cell.clickable {
+    cursor: pointer;
+    background: #111820;
+    border-color: #2a3a4a;
+  }
+
+  .cell.clickable:hover {
+    background: #172030;
+    border-color: var(--active-border);
+    box-shadow: 0 0 8px rgba(255,215,0,0.3);
+  }
+
+  /* Won sub-board overlay */
+  .win-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 8vw, 3.8rem);
+    border-radius: 6px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .win-overlay.X {
+    color: var(--x-color);
+    background: rgba(0,229,255,0.12);
+    text-shadow: 0 0 30px var(--x-color);
+    border: 2px solid rgba(0,229,255,0.3);
+  }
+
+  .win-overlay.O {
+    color: var(--o-color);
+    background: rgba(255,75,110,0.12);
+    text-shadow: 0 0 30px var(--o-color);
+    border: 2px solid rgba(255,75,110,0.3);
+  }
+
+  .win-overlay.C {
+    color: var(--text-dim);
+    background: rgba(60,70,80,0.7);
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    letter-spacing: 0.1em;
+    border: 2px solid var(--border);
+  }
+
+  #game-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+  }
+
+  /* AI thinking indicator */
+  .thinking-dots::after {
+    content: '';
+    animation: dots 1.2s infinite;
+  }
+
+  @keyframes dots {
+    0%   { content: '.'; }
+    33%  { content: '..'; }
+    66%  { content: '...'; }
+    100% { content: ''; }
+  }
+
+  /* Winning announcement */
+  #win-banner {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  #win-banner.show { display: flex; }
+
+  .win-banner-content {
+    text-align: center;
+    padding: 40px 60px;
+    border-radius: 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+  }
+
+  .win-banner-text {
+    font-family: var(--font-main);
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 3rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .win-banner-text.X { color: var(--x-color); text-shadow: 0 0 40px var(--x-color); }
+  .win-banner-text.O { color: var(--o-color); text-shadow: 0 0 40px var(--o-color); }
+  .win-banner-text.tie { color: #ffd700; text-shadow: 0 0 40px #ffd700; }
+
+  .win-banner-sub {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    margin-bottom: 28px;
+  }
+
+  .win-banner-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<h1><span class="x">X</span> Ultimate Tic-Tac-Toe <span class="o">O</span></h1>
+<p class="subtitle">3×3 boards · strategic warfare</p>
+
+<!-- SETUP SCREEN -->
+<div id="setup">
+  <div class="instructions">
+    <strong>How to play:</strong> Win sub-boards by getting 3-in-a-row.<br>
+    Your move position (1–9) decides the <em>next</em> board.<br>
+    Boards 1–9 map to a 3×3 grid (1=top-left, 5=center, 9=bottom-right).<br>
+    Win 3 sub-boards in a row to claim victory!
+  </div>
+  <div class="setup-row">
+    <label><span class="player-badge x">X</span> Player 1</label>
+    <select id="p1type">
+      <option value="1">Human</option>
+      <option value="2">Easy (Random)</option>
+      <option value="3">Hard</option>
+      <option value="4">Extreme</option>
+    </select>
+  </div>
+  <div class="setup-row">
+    <label><span class="player-badge o">O</span> Player 2</label>
+    <select id="p2type">
+      <option value="1">Human</option>
+      <option value="2">Easy (Random)</option>
+      <option value="3">Hard</option>
+      <option value="4" selected>Extreme</option>
+    </select>
+  </div>
+  <button class="btn" onclick="startGame()"><span>Start Game</span></button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game">
+  <div id="status-bar">
+    <div id="status"></div>
+    <div class="score-display">
+      <div class="score-box x" id="score-x">X: 0</div>
+      <div class="score-box o" id="score-o">O: 0</div>
+    </div>
+  </div>
+  <div id="outer-board"></div>
+  <div id="game-footer">
+    <button class="btn btn-sm" onclick="showSetup()"><span>↩ New Game</span></button>
+  </div>
+</div>
+
+<!-- WIN BANNER -->
+<div id="win-banner">
+  <div class="win-banner-content">
+    <div class="win-banner-text" id="win-banner-text"></div>
+    <div class="win-banner-sub" id="win-banner-sub"></div>
+    <div class="win-banner-btns">
+      <button class="btn" onclick="rematch()"><span>Rematch</span></button>
+      <button class="btn btn-sm" onclick="showSetup()"><span>New Setup</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TicTacToeBoard — translated from Java
+// ============================================================
+class TicTacToeBoard {
+  constructor(other) {
+    if (other) {
+      this.grid = other.grid.map(row =>
+        row.map(col =>
+          col.map(r => [...r])
+        )
+      );
+    } else {
+      this.grid = Array.from({length: 3}, () =>
+        Array.from({length: 3}, () =>
+          Array.from({length: 3}, () => Array(3).fill(" "))
+        )
+      );
+    }
+  }
+
+  isValid(corner, move) {
+    if (move < 1 || move > 9) return false;
+    const m = move - 1, c = corner - 1;
+    return this.grid[Math.floor(c/3)][c%3][Math.floor(m/3)][m%3] === " ";
+  }
+
+  makeMove(corner, move, team) {
+    const m = move - 1, c = corner - 1;
+    this.grid[Math.floor(c/3)][c%3][Math.floor(m/3)][m%3] = team;
+  }
+
+  winner(corner) {
+    const c = corner - 1;
+    const g = this.grid[Math.floor(c/3)][c%3];
+    // rows
+    for (let r = 0; r < 3; r++)
+      if (g[r][0] !== " " && g[r][0] === g[r][1] && g[r][0] === g[r][2]) return g[r][0];
+    // cols
+    for (let col = 0; col < 3; col++)
+      if (g[0][col] !== " " && g[0][col] === g[1][col] && g[0][col] === g[2][col]) return g[0][col];
+    // diagonals
+    if (g[0][0] !== " " && g[0][0] === g[1][1] && g[0][0] === g[2][2]) return g[0][0];
+    if (g[0][2] !== " " && g[0][2] === g[1][1] && g[0][2] === g[2][0]) return g[0][2];
+    return " ";
+  }
+
+  full(corner) {
+    const c = corner - 1;
+    const sub = this.grid[Math.floor(c/3)][c%3];
+    for (let r = 0; r < 3; r++)
+      for (let col = 0; col < 3; col++)
+        if (sub[r][col] === " ") return false;
+    return true;
+  }
+
+  _sum(arr, team) {
+    const opp = team === "X" ? "O" : "X";
+    let total = 0;
+    for (const v of arr) {
+      if (v === team) total++;
+      else if (v === opp) total--;
+    }
+    return total;
+  }
+
+  _check(arr, team, type) {
+    const s = this._sum(arr, team);
+    if (s === 2) {
+      if (type === 1) return 10;
+      if (type === 2) return -10;
+      if (type === 4) return 100000000;
+      return 20;
+    }
+    if (s === -2) return -18;
+    return 0;
+  }
+
+  _lines(g) {
+    return [
+      [g[0][0], g[1][0], g[2][0]],
+      [g[0][1], g[1][1], g[2][1]],
+      [g[0][2], g[1][2], g[2][2]],
+      [g[0][0], g[1][1], g[2][2]],
+      [g[0][2], g[1][1], g[2][0]],
+      [g[0][0], g[0][1], g[0][2]],
+      [g[1][0], g[1][1], g[1][2]],
+      [g[2][0], g[2][1], g[2][2]],
+    ];
+  }
+
+  cornerCheck(i, j, test, team, type) {
+    let score = 0;
+    for (const line of this._lines(test.grid[i][j]))
+      score += this._check(line, team, type);
+    return score;
+  }
+
+  boardCheck(wins, team, type) {
+    let score = 0;
+    for (const line of this._lines(wins))
+      score += this._check(line, team, type);
+    return score;
+  }
+
+  calcWorth(wins, corner, team) {
+    let worth = 0;
+    if (corner === 5) {
+      worth = 6;
+      for (let board = 1; board < 10; board++) {
+        if (board === 5) continue;
+        const r1 = Math.floor((board-1)/3), c1 = (board-1)%3;
+        const r2 = Math.floor((10-board-1)/3), c2 = (10-board-1)%3;
+        if (wins[r1][c1] === team && wins[r2][c2] === team) worth += 2;
+        else if (wins[r1][c1] === team && wins[r2][c2] === " ") worth++;
+      }
+    } else if (corner % 2 === 1) {
+      worth = 4;
+      worth += this._sum(wins[Math.floor((corner-1)/3)], team);
+    } else {
+      worth = 2;
+    }
+    return worth;
+  }
+
+  score(wins, corner, move, player, team) {
+    const test = new TicTacToeBoard(this);
+    let sc = 0;
+    const nw = wins.map(r => [...r]);
+    test.makeMove(corner, move, team);
+
+    if (player === 3) {
+      if (move === 5) sc += 3;
+      else if (move % 2 === 1) sc++;
+      const c = corner - 1;
+      const i = Math.floor(c/3), j = c % 3;
+      let worth = (corner === 5) ? 3 : (c % 2 === 0 ? 2 : 1);
+      if (test.winner(corner) === team) { sc += 50 * worth; nw[i][j] = team; }
+      sc += this.cornerCheck(i, j, test, team, 1) * worth;
+      worth = (move === 5) ? 4 : (move % 2 === 1 ? 3 : 2);
+      sc += this.cornerCheck(Math.floor((move-1)/3), (move-1)%3, test, team, 2) * worth;
+      if (wins[Math.floor((move-1)/3)][(move-1)%3] !== " ") sc -= 25;
+
+    } else if (player === 4) {
+      if (move === 5 && corner !== 5) sc += 3;
+      else if (move % 2 === 1 && move !== 5) sc++;
+      const c = corner - 1;
+      const i = Math.floor(c/3), j = c % 3;
+      let worth = (corner === 5) ? this.calcWorth(wins, corner, team) : (c % 2 === 0 ? 3 : 2);
+      if (test.winner(corner) === team) { sc += 50 * worth; nw[i][j] = team; }
+      sc += this.cornerCheck(i, j, test, team, 1) * worth;
+      worth = (move === 5) ? this.calcWorth(wins, move, team) : (move % 2 === 1 ? 3 : 2);
+      sc += this.cornerCheck(Math.floor((move-1)/3), (move-1)%3, test, team, 2) * worth;
+      if (wins[Math.floor((move-1)/3)][(move-1)%3] !== " ") sc -= 75;
+      sc += 10 * this.boardCheck(wins, team, 1);
+    }
+    return sc;
+  }
+
+  cornerScore(corner, player, team, wins) {
+    let score = 0;
+    const ci = Math.floor((corner-1)/3), cj = (corner-1)%3;
+    score += this.cornerCheck(ci, cj, this, team, 3);
+    if (corner === 5) score += 2;
+    else if (corner % 2 === 1) score++;
+
+    const nw = wins.map(r => [...r]);
+    if (this.cornerCheck(ci, cj, this, team, 4) > 10000) nw[ci][cj] = team;
+    if (TicTacToeGame.winner(nw) === team) score += 200;
+    if (player === 4) score += 10 * this.boardCheck(nw, team, 1);
+
+    nw[ci][cj] = team === "X" ? "O" : "X";
+    if (TicTacToeGame.winner(nw) === (team === "X" ? "O" : "X")) score -= 100;
+    return score;
+  }
+}
+
+// ============================================================
+// TicTacToeGame — translated static methods
+// ============================================================
+class TicTacToeGame {
+  static winner(grid) {
+    for (let r = 0; r < 3; r++)
+      if (grid[r][0] !== " " && grid[r][0] === grid[r][1] && grid[r][0] === grid[r][2]) return grid[r][0];
+    for (let c = 0; c < 3; c++)
+      if (grid[0][c] !== " " && grid[0][c] === grid[1][c] && grid[0][c] === grid[2][c]) return grid[0][c];
+    // Note: original Java checks grid[1][1] != " " then grid[0][0].equals(grid[1][1]) — preserved here
+    if (grid[1][1] !== " " && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) return grid[1][1];
+    if (grid[1][1] !== " " && grid[0][2] === grid[1][1] && grid[1][1] === grid[2][0]) return grid[1][1];
+    return " ";
+  }
+
+  static fullGrid(sub) {
+    for (let r = 0; r < 3; r++)
+      for (let c = 0; c < 3; c++)
+        if (sub[r][c] === " ") return false;
+    return true;
+  }
+
+  static getValidBoards(board, wins) {
+    const valid = [];
+    for (let i = 0; i < 3; i++)
+      for (let j = 0; j < 3; j++)
+        if (wins[i][j] === " " && !TicTacToeGame.fullGrid(board.grid[i][j]))
+          valid.push(i * 3 + j + 1);
+    return valid;
+  }
+
+  // Returns a move (1–9) for AI, or null for human
+  static getMove(board, corner, player, team, wins) {
+    if (player === 1) return null;
+    if (player === 2) {
+      let a;
+      do { a = Math.floor(Math.random() * 9) + 1; } while (!board.isValid(corner, a));
+      return a;
+    }
+    // player 3 or 4
+    let max = -10000, possible = [];
+    for (let i = 1; i <= 9; i++) {
+      if (!board.isValid(corner, i)) continue;
+      const sc = board.score(wins, corner, i, player, team);
+      if (sc > max) { possible = [i]; max = sc; }
+      else if (sc === max) possible.push(i);
+    }
+    if (possible.length === 0) return -1;
+    return possible[Math.floor(Math.random() * possible.length)];
+  }
+
+  // Returns a board number for AI, or null for human
+  static getCorner(board, wins, player, team) {
+    const valid = TicTacToeGame.getValidBoards(board, wins);
+    if (valid.length === 0) return -1;
+    if (player === 1) return null;
+    if (player === 2) return valid[Math.floor(Math.random() * valid.length)];
+    // player 3 or 4
+    let topScore = -5000, options = [];
+    for (const i of valid) {
+      const attempt = board.cornerScore(i, player >= 4 ? 4 : player, team, wins);
+      if (attempt > topScore) { options = [i]; topScore = attempt; }
+      else if (attempt === topScore) options.push(i);
+    }
+    return options[Math.floor(Math.random() * options.length)];
+  }
+}
+
+// ============================================================
+// Game State & Controller
+// ============================================================
+let board, wins, currentPlayer, currentCorner, p1type, p2type;
+let gameOver, choosingBoard, aiThinking;
+let scores = { X: 0, O: 0 };
+
+function startGame() {
+  p1type = parseInt(document.getElementById('p1type').value);
+  p2type = parseInt(document.getElementById('p2type').value);
+  initGame();
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('game').style.display = 'block';
+  document.getElementById('win-banner').classList.remove('show');
+}
+
+function rematch() {
+  document.getElementById('win-banner').classList.remove('show');
+  initGame();
+}
+
+function initGame() {
+  board = new TicTacToeBoard();
+  wins = Array.from({length: 3}, () => Array(3).fill(" "));
+  currentPlayer = 1;
+  currentCorner = 5;
+  gameOver = false;
+  choosingBoard = false;
+  aiThinking = false;
+  updateScoreDisplay();
+  render();
+  scheduleNextAction();
+}
+
+function showSetup() {
+  document.getElementById('win-banner').classList.remove('show');
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('setup').style.display = 'flex';
+}
+
+function getPlayerType(p) {
+  p = p || currentPlayer;
+  return p === 1 ? p1type : p2type;
+}
+
+function getTeam(p) {
+  p = p || currentPlayer;
+  return p === 1 ? "X" : "O";
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.className = cls || '';
+  el.textContent = msg;
+}
+
+function updateScoreDisplay() {
+  document.getElementById('score-x').textContent = `X: ${scores.X}`;
+  document.getElementById('score-o').textContent = `O: ${scores.O}`;
+}
+
+function needsBoardChoice() {
+  const oi = Math.floor((currentCorner-1)/3), oj = (currentCorner-1)%3;
+  return wins[oi][oj] !== " " || TicTacToeGame.fullGrid(board.grid[oi][oj]);
+}
+
+// After rendering, decide what to do next
+function scheduleNextAction() {
+  if (gameOver) return;
+  const ptype = getPlayerType();
+  const team = getTeam();
+
+  if (choosingBoard) {
+    if (ptype === 1) {
+      setStatus(`🎯 Player ${currentPlayer} (${team}) — board ${currentCorner} is taken. Click a glowing board!`, team === 'X' ? 'x-turn' : 'o-turn');
+    } else {
+      setStatus(`Player ${currentPlayer} (${team}) is choosing a board`, (team === 'X' ? 'x-turn' : 'o-turn') + ' thinking-dots');
+      setTimeout(aiChooseBoard, 400);
+    }
+  } else {
+    if (ptype === 1) {
+      setStatus(`▶ Player ${currentPlayer} (${team}) — pick your move in board ${currentCorner}`, team === 'X' ? 'x-turn' : 'o-turn');
+    } else {
+      setStatus(`Player ${currentPlayer} (${team}) is thinking`, (team === 'X' ? 'x-turn' : 'o-turn') + ' thinking-dots');
+      setTimeout(aiMakeMove, 400);
+    }
+  }
+}
+
+function aiChooseBoard() {
+  if (gameOver) return;
+  const ptype = getPlayerType();
+  const corner = TicTacToeGame.getCorner(board, wins, ptype, getTeam());
+  currentCorner = corner;
+  choosingBoard = false;
+  render();
+  setStatus(`Player ${currentPlayer} (${getTeam()}) is thinking`, (getTeam() === 'X' ? 'x-turn' : 'o-turn') + ' thinking-dots');
+  setTimeout(aiMakeMove, 300);
+}
+
+function aiMakeMove() {
+  if (gameOver) return;
+  const ptype = getPlayerType();
+  const move = TicTacToeGame.getMove(board, currentCorner, ptype, getTeam(), wins);
+  if (move == null || move === -1) return;
+  executeMove(currentCorner, move);
+}
+
+function executeMove(corner, move) {
+  if (gameOver) return;
+  const team = getTeam();
+  board.makeMove(corner, move, team);
+
+  // Update sub-board win state
+  const oi = Math.floor((corner-1)/3), oj = (corner-1)%3;
+  const w = board.winner(corner);
+  if (w !== " ") {
+    wins[oi][oj] = w;
+    scores[w]++;
+    updateScoreDisplay();
+  } else if (board.full(corner)) {
+    wins[oi][oj] = "C";
+  }
+
+  // Check overall game winner
+  const overall = TicTacToeGame.winner(wins);
+  if (overall !== " ") {
+    gameOver = true;
+    render();
+    showWinBanner(overall);
+    return;
+  }
+
+  // Check all boards exhausted
+  const allDone = wins.every(row => row.every(v => v !== " "));
+  if (allDone) {
+    gameOver = true;
+    render();
+    showWinBanner(null);
+    return;
+  }
+
+  // Switch player and set next corner
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+  currentCorner = move;
+
+  // Determine if next player needs to choose a board
+  choosingBoard = needsBoardChoice();
+  if (choosingBoard) {
+    const valid = TicTacToeGame.getValidBoards(board, wins);
+    if (valid.length === 0) {
+      gameOver = true;
+      render();
+      showWinBanner(null);
+      return;
+    }
+    // For AI: auto-pick. For human: currentCorner stays as hint, board clicking is enabled
+  }
+
+  render();
+  scheduleNextAction();
+}
+
+function showWinBanner(winner) {
+  const textEl = document.getElementById('win-banner-text');
+  const subEl = document.getElementById('win-banner-sub');
+  if (winner) {
+    textEl.textContent = `Player ${winner === 'X' ? 1 : 2} Wins!`;
+    textEl.className = 'win-banner-text ' + winner;
+    const ptype = winner === 'X' ? p1type : p2type;
+    const types = ['', 'Human', 'Easy', 'Hard', 'Extreme'];
+    subEl.textContent = `${winner} (${types[ptype]}) claims victory`;
+    setStatus(`🏆 Player ${winner === 'X' ? 1 : 2} (${winner}) wins!`, 'win');
+  } else {
+    textEl.textContent = "Draw!";
+    textEl.className = 'win-banner-text tie';
+    subEl.textContent = "No more moves available";
+    setStatus("Draw game!", 'win');
+  }
+  setTimeout(() => document.getElementById('win-banner').classList.add('show'), 600);
+}
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  const container = document.getElementById('outer-board');
+  container.innerHTML = '';
+  const ptype = getPlayerType();
+  const validBoards = choosingBoard ? TicTacToeGame.getValidBoards(board, wins) : [];
+
+  for (let oi = 0; oi < 3; oi++) {
+    for (let oj = 0; oj < 3; oj++) {
+      const boardNum = oi * 3 + oj + 1;
+      const div = document.createElement('div');
+      div.className = 'sub-board';
+
+      const isActive = !gameOver && !choosingBoard && boardNum === currentCorner && wins[oi][oj] === " ";
+      const isChoosable = !gameOver && choosingBoard && validBoards.includes(boardNum);
+
+      if (isActive) div.classList.add('active');
+      if (isChoosable) {
+        div.classList.add('choosable');
+        if (ptype === 1) {
+          div.addEventListener('click', () => handleBoardChoice(boardNum));
+        }
+      }
+
+      // Win overlay
+      const winVal = wins[oi][oj];
+      if (winVal !== " ") {
+        const overlay = document.createElement('div');
+        overlay.className = 'win-overlay ' + winVal;
+        overlay.textContent = winVal === 'C' ? 'DRAW' : winVal;
+        div.appendChild(overlay);
+      }
+
+      // Cells
+      for (let ci = 0; ci < 3; ci++) {
+        for (let cj = 0; cj < 3; cj++) {
+          const moveNum = ci * 3 + cj + 1;
+          const val = board.grid[oi][oj][ci][cj];
+          const cell = document.createElement('div');
+          cell.className = 'cell' + (val !== " " ? ' ' + val : '');
+          cell.textContent = val === " " ? "" : val;
+
+          const humanCanClick = !gameOver && isActive && val === " " && !choosingBoard && ptype === 1;
+          if (humanCanClick) {
+            cell.classList.add('clickable');
+            const bn = boardNum, mn = moveNum;
+            cell.addEventListener('click', () => handleCellClick(bn, mn));
+          }
+          div.appendChild(cell);
+        }
+      }
+      container.appendChild(div);
+    }
+  }
+}
+
+function handleBoardChoice(boardNum) {
+  if (!choosingBoard || gameOver) return;
+  if (getPlayerType() !== 1) return;
+  currentCorner = boardNum;
+  choosingBoard = false;
+  render();
+  scheduleNextAction();
+}
+
+function handleCellClick(boardNum, moveNum) {
+  if (gameOver || choosingBoard) return;
+  if (getPlayerType() !== 1) return;
+  if (boardNum !== currentCorner) return;
+  if (!board.isValid(boardNum, moveNum)) return;
+  executeMove(boardNum, moveNum);
+}
+</script>
+</body>
+</html>
