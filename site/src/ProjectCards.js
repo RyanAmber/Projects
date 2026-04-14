@@ -23,7 +23,7 @@ const projects = [
     tag: "Passion Project",
     title: "Super Tic Tac Toe",
     desc: "One of the first games I made a program to play, a more difficult version of Tic Tac Toe, with some interesting strategies.",
-    link: "Projects/SuperTicTacToe.html",
+    link: "SuperTicTacToe.html",
   }
 ];
 
