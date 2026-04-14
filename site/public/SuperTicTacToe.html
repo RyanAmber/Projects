@@ -1,3 +1,5 @@
+<!--Run locally for testing: npm start
+Deploy updates to GitHub Pages: npm run deploy-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -419,9 +421,10 @@
 <!-- SETUP SCREEN -->
 <div id="setup">
   <div class="instructions">
-    <strong>How to play:</strong> Win sub-boards by getting 3-in-a-row.<br>
-    Your move position (1–9) decides the <em>next</em> board.<br>
-    Boards 1–9 map to a 3×3 grid (1=top-left, 5=center, 9=bottom-right).<br>
+    <strong><p style="text-align: center;">How to play:</p></strong>
+    Win sub-boards by getting 3-in-a-row.<br>
+    Your move position decides the <em>next</em> board.<br>
+    That's where your opponent plays.<br>
     Win 3 sub-boards in a row to claim victory!
   </div>
   <div class="setup-row">
@@ -450,8 +453,8 @@
   <div id="status-bar">
     <div id="status"></div>
     <div class="score-display">
-      <div class="score-box x" id="score-x">X: 0</div>
-      <div class="score-box o" id="score-o">O: 0</div>
+      <div class="score-box x" id="score-x">X-Boards: 0</div>
+      <div class="score-box o" id="score-o">O-Boards: 0</div>
     </div>
   </div>
   <div id="outer-board"></div>
@@ -727,6 +730,7 @@ let scores = { X: 0, O: 0 };
 function startGame() {
   p1type = parseInt(document.getElementById('p1type').value);
   p2type = parseInt(document.getElementById('p2type').value);
+  scores = { X: 0, O: 0 };
   initGame();
   document.getElementById('setup').style.display = 'none';
   document.getElementById('game').style.display = 'block';
@@ -735,6 +739,7 @@ function startGame() {
 
 function rematch() {
   document.getElementById('win-banner').classList.remove('show');
+  scores = { X: 0, O: 0 };
   initGame();
 }
 
@@ -774,8 +779,8 @@ function setStatus(msg, cls) {
 }
 
 function updateScoreDisplay() {
-  document.getElementById('score-x').textContent = `X: ${scores.X}`;
-  document.getElementById('score-o').textContent = `O: ${scores.O}`;
+  document.getElementById('score-x').textContent = `X-Boards: ${scores.X}`;
+  document.getElementById('score-o').textContent = `O-Boards: ${scores.O}`;
 }
 
 function needsBoardChoice() {
