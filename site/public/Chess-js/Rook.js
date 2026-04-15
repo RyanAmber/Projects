@@ -1,33 +1,33 @@
-class Bishop extends ChessPiece {
+class Rook extends ChessPiece {
     constructor(color) {
         super(color);
     }
 
     isValidMove(fromRow, fromCol, toRow, toCol, boardObj) {
         const board = boardObj.board;
-        if (Math.abs(fromRow - toRow) !== Math.abs(fromCol - toCol)) return false;
+        if (fromRow !== toRow && fromCol !== toCol) return false;
         
         const stepRow = Math.sign(toRow - fromRow);
         const stepCol = Math.sign(toCol - fromCol);
         
         let r = fromRow + stepRow, c = fromCol + stepCol;
-        while (r !== toRow && c !== toCol) {
-            if (board[r][c] !== null) return false;
+        while (r !== toRow || c !== toCol) {
+            if (board[r][c] != null) return false;
             r += stepRow;
             c += stepCol;
         }
-        return board[toRow][toCol] === null || board[toRow][toCol].getColor() !== this.color;
+        return board[toRow][toCol] == null || board[toRow][toCol].getColor() !== this.color;
     }
 
     toString() { 
-        return this.color === 'b' ? "\u2657" : "\u265D"; 
+        return this.color === 'b' ? "\u265C" : "\u2656"; 
     }
 
     getType() { 
-        return "B"; 
+        return "R"; 
     }
 
     getValue() { 
-        return 3; 
+        return 5; 
     }
 }

@@ -19,7 +19,7 @@ class ChessBoard {
         let sb = "";
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                sb += this.board[i][j] === null ? "." : this.board[i][j].toString();
+                sb += this.board[i][j] == null ? "." : this.board[i][j].toString();
             }
             sb += "/";
         }
@@ -68,17 +68,17 @@ class ChessBoard {
     movePiece(from, to, player, type) {
         const fromIdx = this.parsePosition(from);
         const toIdx = this.parsePosition(to);
-        if (fromIdx === null || toIdx === null) return false;
+        if (fromIdx == null || toIdx == null) return false;
 
         const piece = this.board[fromIdx[0]][fromIdx[1]];
-        if (piece === null || piece.getColor() !== player) return false;
+        if (piece == null || piece.getColor() !== player) return false;
 
         // Save state for undo
         const snapshot = this.copyBoard();
         const castleK = [...this.canCastleKingSide];
         const castleQ = [...this.canCastleQueenSide];
         const kingPosSnap = [...this.kingPosition];
-        const enPassantSnap = this.enPassantTarget === null ? null : [...this.enPassantTarget];
+        const enPassantSnap = this.enPassantTarget == null ? null : [...this.enPassantTarget];
 
         const valid = piece.isValidMove(fromIdx[0], fromIdx[1], toIdx[0], toIdx[1], this);
         if (!valid) return false;
@@ -92,7 +92,7 @@ class ChessBoard {
         }
         // En Passant
         else if (piece instanceof Pawn &&
-                this.enPassantTarget !== null &&
+                this.enPassantTarget != null &&
                 toIdx[0] === this.enPassantTarget[0] && toIdx[1] === this.enPassantTarget[1]) {
             isEnPassant = true;
             this.board[toIdx[0]][toIdx[1]] = piece;
@@ -173,7 +173,7 @@ class ChessBoard {
             this.board[toIdx[0]][toIdx[1]] = promoted;
         }
 
-        this.halfmoveClock = (piece instanceof Pawn || this.board[toIdx[0]][toIdx[1]] !== null) ? 0 : this.halfmoveClock + 1;
+        this.halfmoveClock = (piece instanceof Pawn || this.board[toIdx[0]][toIdx[1]] != null) ? 0 : this.halfmoveClock + 1;
         if (player === 'b') this.fullmoveNumber++;
         return true;
     }
@@ -198,7 +198,7 @@ class ChessBoard {
         for (let i = 0; i < 8; i++) {
             copy[i] = new Array(8);
             for (let j = 0; j < 8; j++) {
-                copy[i][j] = this.board[i][j] === null ? null : this.board[i][j].clone();
+                copy[i][j] = this.board[i][j] == null ? null : this.board[i][j].clone();
             }
         }
         return copy;
@@ -213,7 +213,7 @@ class ChessBoard {
     isSquareAttacked(row, col, byPlayer) {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === byPlayer) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === byPlayer) {
                     if (this.board[i][j] instanceof King && Math.abs(i - row) <= 1 && Math.abs(j - col) <= 1) {
                         return true;
                     } else if (!(this.board[i][j] instanceof King) && this.board[i][j].isValidMove(i, j, row, col, this)) {
@@ -229,7 +229,7 @@ class ChessBoard {
         let min = Number.MAX_VALUE;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === byPlayer) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === byPlayer) {
                     if (this.board[i][j] instanceof King && Math.abs(i - row) <= 1 && Math.abs(j - col) <= 1) {
                         min = Math.min(min, this.board[i][j].getValue());
                     } else if (!(this.board[i][j] instanceof King) && this.board[i][j].isValidMove(i, j, row, col, this)) {
@@ -242,12 +242,12 @@ class ChessBoard {
     }
 
     isSquareDefended(row, col, byPlayer) {
-        if (this.board[row][col] === null || this.board[row][col].getColor() !== byPlayer) {
+        if (this.board[row][col] == null || this.board[row][col].getColor() !== byPlayer) {
             return false;
         }
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === byPlayer) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === byPlayer) {
                     if (i === row && j === col) continue;
                     const original = this.board[row][col];
                     this.board[row][col] = new NullPiece(byPlayer === 'w' ? 'b' : 'w');
@@ -265,7 +265,7 @@ class ChessBoard {
         let count = 0;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === byPlayer) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === byPlayer) {
                     if (this.board[i][j] instanceof King && Math.abs(i - row) <= 1 && Math.abs(j - col) <= 1) {
                         count++;
                     } else if (!(this.board[i][j] instanceof King) && this.board[i][j].isValidMove(i, j, row, col, this)) {
@@ -279,12 +279,12 @@ class ChessBoard {
 
     numSquareDefended(row, col, byPlayer) {
         let count = 0;
-        if (this.board[row][col] === null || this.board[row][col].getColor() !== byPlayer) {
+        if (this.board[row][col] == null || this.board[row][col].getColor() !== byPlayer) {
             return 0;
         }
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === byPlayer) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === byPlayer) {
                     if (i === row && j === col) continue;
                     const original = this.board[row][col];
                     this.board[row][col] = new NullPiece(byPlayer === 'w' ? 'b' : 'w');
@@ -311,7 +311,7 @@ class ChessBoard {
         const pieces = [];
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null) pieces.push(this.board[i][j]);
+                if (this.board[i][j] != null) pieces.push(this.board[i][j]);
             }
         }
         
@@ -350,7 +350,7 @@ class ChessBoard {
     hasLegalMoves(player) {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null && this.board[i][j].getColor() === player) {
+                if (this.board[i][j] != null && this.board[i][j].getColor() === player) {
                     for (let r = 0; r < 8; r++) {
                         for (let c = 0; c < 8; c++) {
                             if (i === r && j === c) continue;
@@ -359,7 +359,7 @@ class ChessBoard {
                                 const castleK = [...this.canCastleKingSide];
                                 const castleQ = [...this.canCastleQueenSide];
                                 const kingPosSnap = [...this.kingPosition];
-                                const enPassantSnap = this.enPassantTarget === null ? null : [...this.enPassantTarget];
+                                const enPassantSnap = this.enPassantTarget == null ? null : [...this.enPassantTarget];
 
                                 this.board[r][c] = this.board[i][j];
                                 this.board[i][j] = null;
@@ -397,7 +397,7 @@ class ChessBoard {
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
                 const piece = this.board[i][j];
-                if (piece !== null && piece.getColor() === player) {
+                if (piece != null && piece.getColor() === player) {
                     for (let r = 0; r < 8; r++) {
                         for (let c = 0; c < 8; c++) {
                             if (i === r && j === c) continue;
@@ -406,7 +406,7 @@ class ChessBoard {
                                 const castleK = [...this.canCastleKingSide];
                                 const castleQ = [...this.canCastleQueenSide];
                                 const kingPosSnap = [...this.kingPosition];
-                                const enPassantSnap = this.enPassantTarget === null ? null : [...this.enPassantTarget];
+                                const enPassantSnap = this.enPassantTarget == null ? null : [...this.enPassantTarget];
 
                                 const movedPiece = this.board[i][j];
                                 this.board[r][c] = movedPiece;
@@ -452,7 +452,7 @@ class ChessBoard {
         let count = 0;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null) {
+                if (this.board[i][j] != null) {
                     if (this.board[i][j] instanceof Queen) {
                         count++;
                     } else if (!(this.board[i][j] instanceof King)) {
@@ -468,7 +468,7 @@ class ChessBoard {
         let count = 0;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                if (this.board[i][j] !== null) {
+                if (this.board[i][j] != null) {
                     if (this.board[i][j] instanceof Pawn && this.board[i][j].getColor() === team) {
                         count++;
                     } else if (!(this.board[i][j] instanceof King) && this.board[i][j].getColor() !== team) {
@@ -486,7 +486,7 @@ class ChessBoard {
             let row = (8 - i) + " ";
             for (let j = 0; j < 8; j++) {
                 const piece = this.board[i][j];
-                row += (piece === null ? "." : piece.toString()) + " ";
+                row += (piece == null ? "." : piece.toString()) + " ";
             }
             console.log(row);
         }

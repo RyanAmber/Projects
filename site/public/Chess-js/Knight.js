@@ -9,13 +9,13 @@ class Knight extends ChessPiece {
         
         if (dr * dc === 2) {
             const target = boardObj.board[toRow][toCol];
-            return target === null || target.getColor() !== this.color;
+            return target == null || target.getColor() !== this.color;
         }
         return false;
     }
 
     toString() { 
-        return this.color === 'b' ? "\u2658" : "\u265E"; 
+        return this.color === 'b' ? "\u265E" : "\u2658"; 
     }
 
     getType() { 

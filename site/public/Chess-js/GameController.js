@@ -89,7 +89,7 @@ class GameController {
         this.gameOverFlag = false;
         this.selectedSquare = null;
         this.validMoves = [];
-        
+        this.board = new ChessBoard();
         document.getElementById('startBtn').disabled = false;
         document.getElementById('player1').disabled = false;
         document.getElementById('player2').disabled = false;

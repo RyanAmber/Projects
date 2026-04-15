@@ -1,3 +1,8 @@
+<!--
+cd /workspaces/AOA/site/public
+python3 -m http.server 8000
+Open /Chess.html
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,17 +118,17 @@
             position: absolute;
             font-size: 10px;
             font-weight: bold;
-            color: #999;
+            color: #000000;
         }
 
         .rank {
-            right: 2px;
-            bottom: 2px;
+            left: 2px;
+            top: 2px;
         }
 
         .file {
-            left: 2px;
-            top: 2px;
+            right: 2px;
+            bottom: 2px;
         }
 
         .control-panel {
@@ -315,14 +320,12 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Chess Board -->
-        <div class="game-section">
+    <div class="game-section">
             <div class="board-container">
                 <div class="chess-board" id="chessBoard"></div>
             </div>
         </div>
-
+    <div class="container">
         <!-- Control Panel -->
         <div class="control-panel">
             <!-- Setup Section -->
@@ -332,15 +335,18 @@
                     <label for="player1">White Player:</label>
                     <select id="player1">
                         <option value="1">Human</option>
-                        <option value="2">AI (Smart)</option>
+                        <option value="2">AI (Basic)</option>
+                        <option value="4">AI (Advanced)</option>
                         <option value="3">AI (Random)</option>
+                        
                     </select>
                 </div>
                 <div class="player-setup">
                     <label for="player2">Black Player:</label>
                     <select id="player2">
                         <option value="1">Human</option>
-                        <option value="2">AI (Smart)</option>
+                        <option value="2">AI (Basic)</option>
+                        <option value="4">AI (Advanced)</option>
                         <option value="3">AI (Random)</option>
                     </select>
                 </div>
@@ -385,17 +391,17 @@
     </div>
 
     <!-- Script includes (in order) -->
-    <script src="ChessPiece.js"></script>
-    <script src="King.js"></script>
-    <script src="Queen.js"></script>
-    <script src="Rook.js"></script>
-    <script src="Bishop.js"></script>
-    <script src="Knight.js"></script>
-    <script src="Pawn.js"></script>
-    <script src="NullPiece.js"></script>
-    <script src="ChessBoard.js"></script>
-    <script src="ChessPlayer.js"></script>
-    <script src="ChessBoardNode.js"></script>
-    <script src="GameController.js"></script>
+<script src="Chess-js/ChessPiece.js"></script>
+<script src="Chess-js/King.js"></script>
+<script src="Chess-js/Queen.js"></script>
+<script src="Chess-js/Rook.js"></script>
+<script src="Chess-js/Bishop.js"></script>
+<script src="Chess-js/Knight.js"></script>
+<script src="Chess-js/Pawn.js"></script>
+<script src="Chess-js/NullPiece.js"></script>
+<script src="Chess-js/ChessBoard.js"></script>
+<script src="Chess-js/ChessPlayer.js"></script>
+<script src="Chess-js/ChessBoardNode.js"></script>
+<script src="Chess-js/GameController.js"></script>
 </body>
 </html>

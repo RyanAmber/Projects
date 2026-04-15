@@ -11,7 +11,7 @@ class King extends ChessPiece {
             }
             return false;
         }
-        return boardObj.board[toRow][toCol] === null || boardObj.board[toRow][toCol].getColor() !== this.color;
+        return boardObj.board[toRow][toCol] == null || boardObj.board[toRow][toCol].getColor() !== this.color;
     }
 
     isValidCastling(kingRow, kingCol, toCol, boardObj) {
@@ -37,14 +37,14 @@ class King extends ChessPiece {
         else if (toCol === 2) {
             if (player === 'w' && !boardObj.canCastleQueenSide[0]) return false;
             if (player === 'b' && !boardObj.canCastleQueenSide[1]) return false;
-            if (board[kingRow][1] !== null || board[kingRow][2] !== null || board[kingRow][3] !== null) return false;
-            return board[kingRow][0] !== null && board[kingRow][0] instanceof Rook;
+            if (board[kingRow][1] != null || board[kingRow][2] != null || board[kingRow][3] != null) return false;
+            return board[kingRow][0] != null && board[kingRow][0] instanceof Rook;
         }
         return false;
     }
 
     toString() {
-        return this.color === 'b' ? "\u2654" : "\u265A";
+        return this.color === 'b' ? "\u265A" : "\u2654";
     }
 
     getType() {
