@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .game-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .board-container {
+            position: relative;
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 0;
+            border: 3px solid #333;
+            background-color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .square {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+
+        .square.light {
+            background-color: #f0d9b5;
+        }
+
+        .square.dark {
+            background-color: #b58863;
+        }
+
+        .square:hover {
+            opacity: 0.8;
+        }
+
+        .square.selected {
+            background-color: #baca44 !important;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .square.valid-move {
+            background-color: #96c956 !important;
+        }
+
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(150, 201, 86, 0.6);
+            border-radius: 50%;
+        }
+
+        .square.in-check {
+            background-color: #ff6b6b !important;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                box-shadow: inset 0 0 10px rgba(255, 107, 107, 0.5);
+            }
+            to {
+                box-shadow: inset 0 0 20px rgba(255, 107, 107, 0.8);
+            }
+        }
+
+        .coordinate {
+            position: absolute;
+            font-size: 10px;
+            font-weight: bold;
+            color: #999;
+        }
+
+        .rank {
+            right: 2px;
+            bottom: 2px;
+        }
+
+        .file {
+            left: 2px;
+            top: 2px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 280px;
+        }
+
+        .setup-section {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .setup-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .player-setup {
+            margin-bottom: 15px;
+        }
+
+        .player-setup label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .player-setup select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .player-setup select:hover {
+            border-color: #667eea;
+        }
+
+        .player-setup select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5568d3;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .game-status {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        .status-line {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .status-label {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .status-value {
+            color: #667eea;
+        }
+
+        .game-log {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .log-entry {
+            padding: 5px;
+            margin: 3px 0;
+            background-color: white;
+            border-left: 3px solid #667eea;
+            border-radius: 3px;
+        }
+
+        .game-over {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ffc107;
+            color: #856404;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .info-section {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #b3d9ff;
+            font-size: 13px;
+            color: #004085;
+        }
+
+        .info-section h4 {
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .chess-board {
+                grid-template-columns: repeat(8, 50px);
+                grid-template-rows: repeat(8, 50px);
+            }
+
+            .square {
+                width: 50px;
+                height: 50px;
+                font-size: 32px;
+            }
+
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .control-panel {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chess Board -->
+        <div class="game-section">
+            <div class="board-container">
+                <div class="chess-board" id="chessBoard"></div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- Setup Section -->
+            <div class="setup-section">
+                <h3>⚙️ Game Setup</h3>
+                <div class="player-setup">
+                    <label for="player1">White Player:</label>
+                    <select id="player1">
+                        <option value="1">Human</option>
+                        <option value="2">AI (Smart)</option>
+                        <option value="3">AI (Random)</option>
+                    </select>
+                </div>
+                <div class="player-setup">
+                    <label for="player2">Black Player:</label>
+                    <select id="player2">
+                        <option value="1">Human</option>
+                        <option value="2">AI (Smart)</option>
+                        <option value="3">AI (Random)</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" id="startBtn">Start Game</button>
+                    <button class="btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </div>
+
+            <!-- Game Status -->
+            <div class="game-status">
+                <h3>📊 Game Status</h3>
+                <div class="status-line">
+                    <span class="status-label">Current Turn:</span>
+                    <span class="status-value" id="currentTurn">Waiting...</span>
+                </div>
+                <div class="status-line">
+                    <span class="status-label">Move Count:</span>
+                    <span class="status-value" id="moveCount">0</span>
+                </div>
+                <div class="status-line">
+                    <span class="status-label">Last Move:</span>
+                    <span class="status-value" id="lastMove">-</span>
+                </div>
+                <div id="gameOverMessage" class="game-over" style="display: none;"></div>
+            </div>
+
+            <!-- Move Log -->
+            <div class="game-log">
+                <div id="moveLog"></div>
+            </div>
+
+            <!-- Info -->
+            <div class="info-section">
+                <h4>♟️ How to Play</h4>
+                <p><strong>Click a piece</strong> to select it</p>
+                <p><strong>Click highlighted square</strong> to move</p>
+                <p><strong>Green squares</strong> show valid moves</p>
+                <p><strong>Red squares</strong> indicate check</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script includes (in order) -->
+    <script src="ChessPiece.js"></script>
+    <script src="King.js"></script>
+    <script src="Queen.js"></script>
+    <script src="Rook.js"></script>
+    <script src="Bishop.js"></script>
+    <script src="Knight.js"></script>
+    <script src="Pawn.js"></script>
+    <script src="NullPiece.js"></script>
+    <script src="ChessBoard.js"></script>
+    <script src="ChessPlayer.js"></script>
+    <script src="ChessBoardNode.js"></script>
+    <script src="GameController.js"></script>
+</body>
+</html>
