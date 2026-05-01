@@ -23,6 +23,7 @@ class GameController {
         // Event listeners
         document.getElementById('startBtn').addEventListener('click', () => this.startGame());
         document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+        document.getElementById('newGameBtn').addEventListener('click', () => this.showSetup());
         boardElement.addEventListener('click', (e) => this.handleBoardClick(e));
     }
 
@@ -70,6 +71,8 @@ class GameController {
         this.gameOverFlag = false;
         this.selectedSquare = null;
 
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('game').style.display = 'flex';
         document.getElementById('startBtn').disabled = true;
         document.getElementById('gameOverMessage').style.display = 'none';
         document.getElementById('player1').disabled = true;
@@ -101,6 +104,30 @@ class GameController {
 
         this.initializeBoard(document.getElementById('chessBoard'));
         this.renderBoard();
+    }
+
+    showSetup() {
+        this.gameActive = false;
+        this.gameOverFlag = false;
+        this.selectedSquare = null;
+        this.validMoves = [];
+        this.moveHistory = [];
+        this.moveCount = 0;
+        this.boardStates = new Map();
+        this.board = new ChessBoard();
+
+        document.getElementById('setup').style.display = 'flex';
+        document.getElementById('game').style.display = 'none';
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('player1').disabled = false;
+        document.getElementById('player2').disabled = false;
+        document.getElementById('gameOverMessage').style.display = 'none';
+        document.getElementById('moveLog').innerHTML = '';
+        document.getElementById('currentTurn').textContent = 'Waiting...';
+        document.getElementById('moveCount').textContent = '0';
+        document.getElementById('lastMove').textContent = '-';
+
+        this.initializeBoard(document.getElementById('chessBoard'));
     }
 
     handleBoardClick(e) {

@@ -15,8 +15,7 @@ public class ChessGame {
         int w2 = 0;
         int t = 0;
 
-        for (int i = 0; i <1; i++) {
-            System.out.println("Starting game                                                 " + (i + 1));
+        for (int i = 0; i < 1; i++) {
             char currentPlayer = 'w';
             boolean gameOver = false;
             ChessBoard board = new ChessBoard();
