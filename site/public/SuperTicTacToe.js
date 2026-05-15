@@ -167,6 +167,23 @@ class TicTacToeBoard {
 
     nw[ci][cj] = team === "X" ? "O" : "X";
     if (TicTacToeGame.winner(nw) === (team === "X" ? "O" : "X")) score -= 100;
+
+    // For player 4, consider the best move that can be made in this corner
+    if (player === 4) {
+      let bestMoveScore = -10000;
+      for (let i = 1; i <= 9; i++) {
+        if (this.isValid(corner, i)) {
+          const moveScore = this.score(wins, corner, i, player, team);
+          if (moveScore > bestMoveScore) {
+            bestMoveScore = moveScore;
+          }
+        }
+      }
+      if (bestMoveScore > -10000) {
+        score += bestMoveScore * 0.25;
+      }
+    }
+    
     return score;
   }
 }
