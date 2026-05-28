@@ -245,16 +245,16 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if index+1<gameState.getNumAgents():
                 index+=1
             dist=self.bfs_nearest_food(successor)
-            if self.bfs_nearest_food(gameState)+1<dist:
+            if self.bfs_nearest_food(gameState)<dist:
                 dist=self.bfs_nearest_food(gameState)
-            print(str(action)+": "+str(dist))
+            #print(str(action)+": "+str(dist))
             #if dist>10:
                 #util.pause()
-            score=self.minimax(successor,action,index,self.depth)-dist*5
+            score=self.minimax(successor,action,index,self.depth)-dist*50
             if score>best:
                 bestmove=action
                 best=score
-        print("Score: "+str(round(best/5.0)))
+        #print("Score: "+str(round(best/5.0)))
         return bestmove
     
     def bfs_nearest_food(self, gameState: GameState):

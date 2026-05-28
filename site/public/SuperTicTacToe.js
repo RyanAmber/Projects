@@ -65,7 +65,7 @@ class TicTacToeBoard {
     if (s === 2) {
       if (type === 1) return 10;
       if (type === 2) return -10;
-      if (type === 4) return 100000000;
+      if (type === 4) return 1000;
       return 20;
     }
     if (s === -2) return -18;
