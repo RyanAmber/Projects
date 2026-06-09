@@ -62,6 +62,80 @@ class ChessPlayer {
                 move[0] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[1]) + (8 - moveIndices[0]);
                 move[1] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[3]) + (8 - moveIndices[2]);
             }
+        } else if (this.type === 4) {
+            // Advanced AI with minimax
+            console.log("Initial Score: " + this.score(board.copyBoard(), team, board.halfmoveClock, this.getWeights(), boardStates));
+            
+            const allMoves = board.getAllLegalMoves(team);
+            const moveScores = new Map();
+            
+            // Evaluate each possible move to depth 2
+            for (let moveIndices of allMoves) {
+                const testboard = board.copyBoard();
+                let halfmove = board.halfmoveClock;
+                
+                // Update halfmove clock
+                if (testboard[moveIndices[2]][moveIndices[3]] !== null || testboard[moveIndices[0]][moveIndices[1]].getType() === "P") {
+                    halfmove = 0;
+                } else {
+                    halfmove++;
+                }
+                
+                // Make the move on test board
+                testboard[moveIndices[2]][moveIndices[3]] = testboard[moveIndices[0]][moveIndices[1]];
+                testboard[moveIndices[0]][moveIndices[1]] = null;
+                
+                // Evaluate using minimax with alpha-beta pruning
+                const moveScore = this.minimax(testboard, 2, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, 
+                                               team === 'w' ? 'b' : 'w', halfmove, this.getWeights(), boardStates);
+                moveScores.set(moveIndices, moveScore);
+            }
+            
+            // Find best move(s)
+            let bestScore = team === 'w' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+            let bestMoves = [];
+            
+            for (let [moveIndices, score] of moveScores.entries()) {
+                const fromNotation = String.fromCharCode('a'.charCodeAt(0) + moveIndices[1]) + (8 - moveIndices[0]);
+                const toNotation = String.fromCharCode('a'.charCodeAt(0) + moveIndices[3]) + (8 - moveIndices[2]);
+                console.log(`Move: ${fromNotation} to ${toNotation}, Score: ${score}`);
+                
+                if (team === 'w') {
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMoves = [moveIndices];
+                    } else if (score === bestScore) {
+                        bestMoves.push(moveIndices);
+                    }
+                } else {
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestMoves = [moveIndices];
+                    } else if (score === bestScore) {
+                        bestMoves.push(moveIndices);
+                    }
+                }
+            }
+            
+            // Use opening book for initial position
+            let openingMoves = [];
+            if (board.toString() === new ChessBoard().toString()) {
+                if (team === 'w') {
+                    openingMoves = [[6, 4, 4, 4], [6, 3, 4, 3], [7, 6, 5, 5], [7, 1, 5, 2], [6, 1, 5, 1], [6, 2, 4, 2], [6, 6, 5, 6]];
+                } else {
+                    openingMoves = [[1, 4, 3, 4], [1, 3, 3, 3], [0, 6, 2, 5], [0, 1, 2, 2], [1, 6, 2, 6], [1, 5, 3, 5], [1, 1, 2, 1]];
+                }
+            }
+            
+            // Choose from best moves or opening book
+            const candidates = openingMoves.length > 0 ? openingMoves : bestMoves;
+            if (candidates.length > 0) {
+                const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+                move[0] = String.fromCharCode('a'.charCodeAt(0) + chosen[1]) + (8 - chosen[0]);
+                move[1] = String.fromCharCode('a'.charCodeAt(0) + chosen[3]) + (8 - chosen[2]);
+            }
+            
+            console.log("Best Score: " + bestScore);
         }
 
         console.log("Chosen move: " + move[0] + " to " + move[1]);
@@ -309,8 +383,10 @@ class ChessPlayer {
                         }
                     } else if (board[newRow][newCol].getColor() !== team) {
                         safety -= 1;
-                    } else if (b.isSquareAttacked(newRow, newCol, team === 'w' ? 'b' : 'w')) {
-                        safety -= 1;
+                        // Check if this attacked piece is also vulnerable
+                        if (b.isSquareAttacked(newRow, newCol, team === 'w' ? 'b' : 'w')) {
+                            safety -= 0.5;
+                        }
                     }
                 } else {
                     safety += 1;
@@ -376,5 +452,82 @@ class ChessPlayer {
             }
         }
         return active;
+    }
+
+    minimax(board, depth, alpha, beta, currentPlayer, halfmove, weights, boardStates) {
+        // Terminal node - evaluate board
+        if (depth === 0) {
+            const b = new ChessBoard();
+            b.setupBoard(board);
+            
+            // Check for terminal conditions
+            if (b.isInCheckmate(currentPlayer)) {
+                return currentPlayer === 'w' ? -200000 : 200000;
+            }
+            if (b.isInStalemate(currentPlayer)) {
+                return 0;
+            }
+            
+            return this.score(board, currentPlayer === 'w' ? 'b' : 'w', halfmove, weights, boardStates);
+        }
+        
+        const b = new ChessBoard();
+        b.setupBoard(board);
+        const allMoves = b.getAllLegalMoves(currentPlayer);
+        
+        if (allMoves.length === 0) {
+            if (b.isInCheckmate(currentPlayer)) {
+                return currentPlayer === 'w' ? -200000 : 200000;
+            }
+            return 0; // Stalemate
+        }
+        
+        // Maximizing player (white)
+        if (currentPlayer === 'w') {
+            let maxEval = Number.NEGATIVE_INFINITY;
+            for (let move of allMoves) {
+                const newBoard = board.map(row => [...row]); // Deep copy
+                let newHalfmove = halfmove;
+                
+                if (newBoard[move[2]][move[3]] !== null || newBoard[move[0]][move[1]].getType() === "P") {
+                    newHalfmove = 0;
+                } else {
+                    newHalfmove++;
+                }
+                
+                newBoard[move[2]][move[3]] = newBoard[move[0]][move[1]];
+                newBoard[move[0]][move[1]] = null;
+                
+                const eval_ = this.minimax(newBoard, depth - 1, alpha, beta, 'b', newHalfmove, weights, boardStates);
+                maxEval = Math.max(maxEval, eval_);
+                alpha = Math.max(alpha, eval_);
+                
+                if (beta <= alpha) break; // Alpha-beta cutoff
+            }
+            return maxEval;
+        } else {
+            // Minimizing player (black)
+            let minEval = Number.POSITIVE_INFINITY;
+            for (let move of allMoves) {
+                const newBoard = board.map(row => [...row]); // Deep copy
+                let newHalfmove = halfmove;
+                
+                if (newBoard[move[2]][move[3]] !== null || newBoard[move[0]][move[1]].getType() === "P") {
+                    newHalfmove = 0;
+                } else {
+                    newHalfmove++;
+                }
+                
+                newBoard[move[2]][move[3]] = newBoard[move[0]][move[1]];
+                newBoard[move[0]][move[1]] = null;
+                
+                const eval_ = this.minimax(newBoard, depth - 1, alpha, beta, 'w', newHalfmove, weights, boardStates);
+                minEval = Math.min(minEval, eval_);
+                beta = Math.min(beta, eval_);
+                
+                if (beta <= alpha) break; // Alpha-beta cutoff
+            }
+            return minEval;
+        }
     }
 }
