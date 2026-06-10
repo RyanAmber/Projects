@@ -210,7 +210,7 @@ class GameController {
 
         const player = this.currentPlayer === 'w' ? this.p1 : this.p2;
         const move = player.getMove(this.board, this.currentPlayer, this.boardStates);
-
+        console.log(`AI move: ${move[0]} → ${move[1]}`);
         if (move[0] && move[1]) {
             const fromIdx = this.board.parsePosition(move[0]);
             const toIdx = this.board.parsePosition(move[1]);

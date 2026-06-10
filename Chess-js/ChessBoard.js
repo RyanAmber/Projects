@@ -488,7 +488,7 @@ class ChessBoard {
                 const piece = this.board[i][j];
                 row += (piece == null ? "." : piece.toString()) + " ";
             }
-            console.log(row);
+            //console.log(row);
         }
         console.log("  a b c d e f g h");
     }

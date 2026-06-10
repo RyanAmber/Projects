@@ -355,7 +355,7 @@ class ChessPlayer {
         return score;
     }
 
-    static kingSafety(board, team) {
+    kingSafety(board, team) {
         const b = new ChessBoard();
         b.setupBoard(board);
         let safety = 0;
@@ -396,7 +396,7 @@ class ChessPlayer {
         return safety;
     }
 
-    static rookFiles(board, team) {
+    rookFiles(board, team) {
         let openFiles = 0;
         for (let c = 0; c < 8; c++) {
             let hasRook = false;
@@ -417,7 +417,7 @@ class ChessPlayer {
         return openFiles;
     }
 
-    static pawnProgress(board, team) {
+    pawnProgress(board, team) {
         let progress = 0;
         for (let c = 0; c < 8; c++) {
             for (let r = 0; r < 8; r++) {
@@ -436,7 +436,7 @@ class ChessPlayer {
         return progress;
     }
 
-    static activePieces(board, team) {
+    activePieces(board, team) {
         let active = 0;
         for (let c = 0; c < 8; c++) {
             if (team === 'w') {
