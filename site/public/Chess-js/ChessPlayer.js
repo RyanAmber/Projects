@@ -10,7 +10,7 @@ class ChessPlayer {
     getMove(board, team, boardStates) {
         let move = ['', ''];
 
-        if (this.type === 1) {
+        if (this.type == 1) {
             // Human move - would need UI input in a real app
             // For now, return first legal move
             const moves = board.getAllLegalMoves(team);
@@ -19,7 +19,7 @@ class ChessPlayer {
                 move[0] = String.fromCharCode('a'.charCodeAt(0) + m[1]) + (8 - m[0]);
                 move[1] = String.fromCharCode('a'.charCodeAt(0) + m[3]) + (8 - m[2]);
             }
-        } else if (this.type === 2) {
+        } else if (this.type == 2) {
             // Simple AI
             console.log("Current board score: " + this.score(board.copyBoard(), team, board.halfmoveClock, this.getWeights(), boardStates));
             const allMoves = board.getAllLegalMoves(team);
@@ -54,7 +54,7 @@ class ChessPlayer {
                 move[0] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[1]) + (8 - moveIndices[0]);
                 move[1] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[3]) + (8 - moveIndices[2]);
             }
-        } else if (this.type === 3) {
+        } else if (this.type == 3) {
             // Random move
             const allMoves = board.getAllLegalMoves(team);
             if (allMoves.length > 0) {
@@ -62,7 +62,7 @@ class ChessPlayer {
                 move[0] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[1]) + (8 - moveIndices[0]);
                 move[1] = String.fromCharCode('a'.charCodeAt(0) + moveIndices[3]) + (8 - moveIndices[2]);
             }
-        } else if (this.type === 4) {
+        } else if (this.type == 4) {
             // Advanced AI with minimax
             console.log("Initial Score: " + this.score(board.copyBoard(), team, board.halfmoveClock, this.getWeights(), boardStates));
             
@@ -75,7 +75,7 @@ class ChessPlayer {
                 let halfmove = board.halfmoveClock;
                 
                 // Update halfmove clock
-                if (testboard[moveIndices[2]][moveIndices[3]] !== null || testboard[moveIndices[0]][moveIndices[1]].getType() === "P") {
+                if (testboard[moveIndices[2]][moveIndices[3]] != null || testboard[moveIndices[0]][moveIndices[1]].getType() == "P") {
                     halfmove = 0;
                 } else {
                     halfmove++;
@@ -87,12 +87,12 @@ class ChessPlayer {
                 
                 // Evaluate using minimax with alpha-beta pruning
                 const moveScore = this.minimax(testboard, 2, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, 
-                                               team === 'w' ? 'b' : 'w', halfmove, this.getWeights(), boardStates);
+                                               team == 'w' ? 'b' : 'w', halfmove, this.getWeights(), boardStates);
                 moveScores.set(moveIndices, moveScore);
             }
             
             // Find best move(s)
-            let bestScore = team === 'w' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+            let bestScore = team == 'w' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
             let bestMoves = [];
             
             for (let [moveIndices, score] of moveScores.entries()) {
@@ -100,18 +100,18 @@ class ChessPlayer {
                 const toNotation = String.fromCharCode('a'.charCodeAt(0) + moveIndices[3]) + (8 - moveIndices[2]);
                 console.log(`Move: ${fromNotation} to ${toNotation}, Score: ${score}`);
                 
-                if (team === 'w') {
+                if (team == 'w') {
                     if (score > bestScore) {
                         bestScore = score;
                         bestMoves = [moveIndices];
-                    } else if (score === bestScore) {
+                    } else if (score == bestScore) {
                         bestMoves.push(moveIndices);
                     }
                 } else {
                     if (score < bestScore) {
                         bestScore = score;
                         bestMoves = [moveIndices];
-                    } else if (score === bestScore) {
+                    } else if (score == bestScore) {
                         bestMoves.push(moveIndices);
                     }
                 }
@@ -119,8 +119,8 @@ class ChessPlayer {
             
             // Use opening book for initial position
             let openingMoves = [];
-            if (board.toString() === new ChessBoard().toString()) {
-                if (team === 'w') {
+            if (board.toString() == new ChessBoard().toString()) {
+                if (team == 'w') {
                     openingMoves = [[6, 4, 4, 4], [6, 3, 4, 3], [7, 6, 5, 5], [7, 1, 5, 2], [6, 1, 5, 1], [6, 2, 4, 2], [6, 6, 5, 6]];
                 } else {
                     openingMoves = [[1, 4, 3, 4], [1, 3, 3, 3], [0, 6, 2, 5], [0, 1, 2, 2], [1, 6, 2, 6], [1, 5, 3, 5], [1, 1, 2, 1]];
@@ -143,7 +143,7 @@ class ChessPlayer {
     }
 
     getWeights() {
-        return [0.0, 1.0, 3.0, 3.0, 5.0, 9.0, 0.02]; // Piece values: P, N, B, R, Q, K, mobility
+        return [0.0, 1.0, 3.0, 3.0, 5.0, 9.0, 0.01]; // Piece values: P, N, B, R, Q, K, mobility
     }
 
     score(board, team, moves, weights, boardStates) {
