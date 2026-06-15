@@ -22,7 +22,7 @@ Open /Chess.html
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1e2a3a 0%, #090c10 100%);
+            background: #0a3d00;
             padding: 20px;
         }
 
@@ -101,7 +101,7 @@ Open /Chess.html
         }
 
         .square.in-check {
-            background-color: #ff6b6b !important;
+            background-color: #bb0000 !important;
             animation: pulse 0.5s infinite alternate;
         }
 
@@ -384,6 +384,13 @@ Open /Chess.html
             <div class="button-group">
                 <button class="btn-primary" id="startBtn">Start Game</button>
             </div>
+            <!--<h3>How to Play</h3>
+            <div class="info-section">
+                <p><strong>Click a piece</strong> to select it</p>
+                <p><strong>Click highlighted square</strong> to move</p>
+                <p><strong>Green squares</strong> show valid moves</p>
+                <p><strong>Red squares</strong> indicate check</p>
+            </div>-->
         </div>
     </div>
 
@@ -418,17 +425,8 @@ Open /Chess.html
                     </div>
                     <div id="gameOverMessage" class="game-over" style="display: none;"></div>
                     <div class="game-footer">
-                        <button class="btn-secondary" id="resetBtn">Reset</button>
                         <button class="btn-secondary" id="newGameBtn">New Game</button>
                     </div>
-                </div>
-                <!-- Info -->
-                <div class="info-section">
-                    <h4>♟️ How to Play</h4>
-                    <p><strong>Click a piece</strong> to select it</p>
-                    <p><strong>Click highlighted square</strong> to move</p>
-                    <p><strong>Green squares</strong> show valid moves</p>
-                    <p><strong>Red squares</strong> indicate check</p>
                 </div>
             </div>
         </div>

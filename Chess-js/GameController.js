@@ -22,7 +22,7 @@ class GameController {
 
         // Event listeners
         document.getElementById('startBtn').addEventListener('click', () => this.startGame());
-        document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+        //document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
         document.getElementById('newGameBtn').addEventListener('click', () => this.showSetup());
         boardElement.addEventListener('click', (e) => this.handleBoardClick(e));
     }
@@ -36,13 +36,13 @@ class GameController {
                 square.id = `square-${row}-${col}`;
                 
                 // Add coordinates
-                if (col === 0) {
+                if (col == 0) {
                     const rank = document.createElement('span');
                     rank.className = 'coordinate rank';
                     rank.textContent = 8 - row;
                     square.appendChild(rank);
                 }
-                if (row === 7) {
+                if (row == 7) {
                     const file = document.createElement('span');
                     file.className = 'coordinate file';
                     file.textContent = String.fromCharCode(97 + col);
@@ -222,26 +222,31 @@ class GameController {
         const player = this.currentPlayer;
 
         if (this.board.isInCheckmate(player)) {
+            this.updateUI();
             this.endGame(`${player === 'w' ? 'Black' : 'White'} wins by checkmate!`);
             return;
         }
 
         if (this.boardStates.has(this.board.toString()) && this.boardStates.get(this.board.toString()) >= 3) {
+            this.updateUI();
             this.endGame("Draw by threefold repetition!");
             return;
         }
 
         if (this.board.isInStalemate(player)) {
+            this.updateUI();
             this.endGame("Draw by stalemate!");
             return;
         }
 
         if (this.board.isFiftyMoveRule()) {
+            this.updateUI();
             this.endGame("Draw by 50-move rule!");
             return;
         }
 
         if (this.board.isInsufficientMaterial()) {
+            this.updateUI();
             this.endGame("Draw by insufficient material!");
             return;
         }
@@ -310,6 +315,7 @@ class GameController {
             : '-';
 
         // Update move log
+        
         const moveLog = document.getElementById('moveLog');
         moveLog.innerHTML = this.moveHistory.map((move, idx) => 
             `<div class="log-entry">Move ${idx + 1}: ${move}</div>`
